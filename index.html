@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tridawk</title>
 
-    <link rel="icon" type="image/png" sizes="48x48" href="logo.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="logo.png">[cite: 3]
     
-    <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">
+    <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">[cite: 3]
     <style>
         :root {
             --bg-color: #040406;
@@ -67,6 +67,19 @@
             font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        /* Minimizar el logo automáticamente en móviles por defecto */
+        @media (max-width: 768px) {
+            #logo-corner {
+                height: 30px;
+                width: 70px;
+                box-shadow: 0 0 6px var(--cyan-accent);
+                cursor: pointer;
+            }
+            #logo-corner img {
+                display: none;
+            }
         }
 
         .window-controls {
