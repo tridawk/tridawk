@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRIDAWK</title>
-    <meta name="description" content="Official site of Tridawk. Indie games, mods, and void explorations.">
+    <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">
     <style>
         :root {
-            --bg-color: #08080a;
-            --text-color: #d0d0d0;
-            --accent-color: #ff3366;
-            --border-color: #222;
+            --bg-color: #040406;
+            --text-color: #dcdce6;
+            --pink-accent: #ff2a5f;
+            --cyan-accent: #00f0ff;
+            --purple-accent: #9d00ff;
+            --border-color: #1a1a2e;
         }
 
         body {
@@ -23,363 +25,1032 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Top Right Corner Square Logo (XXL) */
+        #logo-corner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--cyan-accent);
+            box-shadow: 0 0 12px var(--cyan-accent);
+            overflow: hidden;
+            z-index: 10;
+            background: #000;
+        }
+
+        #logo-corner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Animated background canvas */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
         .container {
-            max-width: 650px;
+            max-width: 680px;
             width: 100%;
-            padding: 30px 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
             text-align: center;
+            z-index: 1;
         }
 
-        /* Banner & Logo */
-        .banner-container {
-            width: 100%;
-            max-height: 180px;
-            overflow: hidden;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-
-        .banner-container img {
-            width: 100%;
-            object-fit: cover;
-        }
-
-        .logo-container {
-            margin-bottom: 15px;
-        }
-
-        .logo-container img {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-color);
-            object-fit: cover;
-        }
-
+        /* Neon Title with Glitch effect */
         h1 {
-            font-size: 2.5rem;
-            letter-spacing: 6px;
+            font-size: 4rem;
+            letter-spacing: 14px;
             color: #fff;
-            margin: 5px 0;
+            margin: 0 0 5px 0;
             text-transform: uppercase;
+            text-shadow: 3px 3px var(--pink-accent), -3px -3px var(--cyan-accent);
+            animation: glitchTitle 4s infinite;
+        }
+
+        @keyframes glitchTitle {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
 
         .subtitle {
-            font-size: 0.8rem;
-            color: #777;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 25px;
-        }
-
-        /* Dropdown Menu Style */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 30px;
-        }
-
-        .dropbtn {
-            background-color: #111;
-            color: var(--accent-color);
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            font-family: 'Courier New', Courier, monospace;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #111;
-            min-width: 200px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
-            z-index: 1;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .dropdown-content a, .dropdown-content .dropdown-text {
-            color: var(--text-color);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
             font-size: 0.85rem;
-            border-bottom: 1px solid #1a1a1a;
-            box-sizing: border-box;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #1a1a1a;
-            color: var(--accent-color);
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .section {
-            margin-bottom: 35px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 25px;
-        }
-
-        h2 {
-            font-size: 0.95rem;
-            color: var(--accent-color);
+            color: var(--cyan-accent);
+            letter-spacing: 4px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
+            margin-bottom: 35px;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
         }
 
+        /* Top Nav Bar */
+        .nav-bar {
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+        }
+
+        .nav-link {
+            color: var(--cyan-accent);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 8px;
+            display: inline-block;
+        }
+
+        .nav-link:hover {
+            color: var(--pink-accent);
+            text-shadow: 0 0 10px var(--pink-accent);
+            transform: translateY(-2px);
+        }
+
+        /* Links Grid */
         .links-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 16px;
+            margin-top: 10px;
         }
 
-        a.link-button {
-            display: block;
-            background: #111;
-            color: #fff;
-            padding: 10px 20px;
+        .link-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             text-decoration: none;
+            color: #fff;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            padding: 14px;
             border: 1px solid var(--border-color);
+            transition: all 0.25s ease;
+            background: rgba(10, 10, 18, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-row:hover {
+            border-color: var(--cyan-accent);
+            background: rgba(0, 240, 255, 0.08);
+            transform: scale(1.02);
+            color: var(--cyan-accent);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        /* Icon Boxes [□] */
+        .icon-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--pink-accent);
+            box-shadow: 0 0 6px var(--pink-accent);
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .link-row:hover .icon-box {
+            border-color: var(--cyan-accent);
+            box-shadow: 0 0 10px var(--cyan-accent);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 40px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 30px;
+            text-align: left;
+        }
+
+        .faq-title {
+            color: var(--cyan-accent);
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            background: #0d0d16;
+            transition: border-color 0.2s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--purple-accent);
+        }
+
+        .faq-question {
+            padding: 12px 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--cyan-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 15px 12px 15px;
+            font-size: 0.8rem;
+            color: #999;
+            line-height: 1.5;
+            display: none;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+            padding-top: 10px;
+        }
+
+        /* Special Thanks Section */
+        .special-thanks {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(157, 0, 255, 0.05);
+            border: 1px dashed var(--purple-accent);
+            text-align: center;
+        }
+
+        .special-thanks h3 {
+            color: var(--purple-accent);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+        }
+
+        .special-thanks p {
+            color: #aaa;
+            font-size: 0.75rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 5, 0.9);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #090910;
+            border: 2px solid var(--pink-accent);
+            padding: 30px;
+            max-width: 520px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 42, 95, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #666;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--cyan-accent);
+        }
+
+        /* Game Selector Menu */
+        .game-selector {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            background: #111;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
             letter-spacing: 1px;
             transition: all 0.2s ease;
-            font-size: 0.9rem;
         }
 
-        a.link-button:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-            background: #151518;
+        .game-btn:hover, .game-btn.active {
+            border-color: var(--cyan-accent);
+            color: var(--cyan-accent);
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
         }
 
-        /* Snake Game styles */
-        #snake-container {
-            display: flex;
+        .game-screen {
+            display: none;
             flex-direction: column;
             align-items: center;
-            margin-top: 10px;
-            outline: none;
         }
 
-        canvas {
-            border: 2px solid var(--border-color);
-            background-color: #000;
-            max-width: 100%;
-            height: auto;
+        .game-screen.active {
+            display: flex;
+        }
+
+        .score-board {
+            font-size: 0.8rem;
+            color: var(--pink-accent);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        canvas.game-canvas {
+            border: 2px solid var(--pink-accent);
+            background: #000;
             cursor: pointer;
+            outline: none;
+            box-shadow: 0 0 12px rgba(255, 42, 95, 0.2);
+            touch-action: none;
         }
 
         .game-hint {
-            font-size: 0.75rem;
-            color: #666;
+            font-size: 0.7rem;
+            color: var(--cyan-accent);
             margin-top: 8px;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        /* Mobile Controls */
+        .mobile-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .mobile-controls {
+                display: none !important;
+            }
+        }
+
+        .touch-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .touch-btn {
+            background: rgba(15, 15, 25, 0.8);
+            color: var(--cyan-accent);
+            border: 1px solid var(--cyan-accent);
+            width: 44px;
+            height: 44px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .touch-btn:active {
+            background: var(--cyan-accent);
+            color: #000;
         }
 
         footer {
             margin-top: auto;
-            padding: 20px 0;
+            padding: 30px 0;
             font-size: 0.75rem;
             color: #444;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
-    <!-- BANNER -->
-    <div class="banner-container">
-        <!-- Reemplaza el enlace de abajo por la imagen de tu banner -->
-        <img src="https://picsum.photos/1200/300?blur=2" alt="Tridawk Banner">
+    <!-- TOP RIGHT CORNER SQUARE LOGO (200x200) -->
+    <div id="logo-corner">
+        <img src="logo.png" alt="Tridawk Logo" onerror="this.src='https://i.ibb.co/4g9LCgdz/starcawtsmolnolyrics.png'">
     </div>
 
+    <!-- Dynamic Animated Particle Background -->
+    <canvas id="bgCanvas"></canvas>
+
     <div class="container">
-        <!-- LOGO -->
-        <div class="logo-container">
-            <!-- Reemplaza el enlace de abajo por tu logo real -->
-            <img src="https://picsum.photos/200" alt="Tridawk Logo">
+        <h1>TRIDAWK</h1>
+        <div class="subtitle">Game dev and modder</div>
+
+        <!-- Top Navigation -->
+        <div class="nav-bar">
+            <span class="nav-link" onclick="openModal('aboutModal')">about me</span> | 
+            <span class="nav-link" onclick="openModal('contactModal')">contact</span> | 
+            <span class="nav-link" onclick="openModal('donationsModal')">donations</span> | 
+            <span class="nav-link" onclick="openModal('gamesModal')">web-games</span>
         </div>
 
-        <h1>Tridawk</h1>
-        <div class="subtitle">Indie Developer & Modder</div>
+        <!-- Links Grid -->
+        <div class="links-grid">
+            <a class="link-row" href="https://tridawk.itch.io" target="_blank">
+                <span class="icon-box"></span>
+                <span>ITCH.IO</span>
+            </a>
 
-        <!-- DROPDOWN MENU -->
-        <div class="dropdown">
-            <button class="dropbtn">Menu ▼</button>
-            <div class="dropdown-content">
-                <div class="dropdown-text"><strong>About Me:</strong> I'll complete this someday.</div>
-                <a href="mailto:tridawk@example.com">Contact: never</a>
-                <a href="#" onclick="alert('Nope. Absolute nope.'); return false;">Donate: (nope)</a>
+            <a class="link-row" href="https://www.tiktok.com/@tridawk" target="_blank">
+                <span>TIKTOK</span>
+                <span class="icon-box"></span>
+            </a>
+
+            <a class="link-row" href="https://www.nexusmods.com/profile/tridawk/mods?gameId=4205" target="_blank">
+                <span class="icon-box"></span>
+                <span>NEXUS MODS</span>
+            </a>
+
+            <a class="link-row" href="https://mod.io/u/tridawk/" target="_blank">
+                <span>MOD.IO</span>
+                <span class="icon-box"></span>
+            </a>
+            <a class="link-row" href="https://steamcommunity.com/id/tridawk/" target="_blank">
+                <span class="icon-box"></span>
+                <span>Steam</span>
+            </a>
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <div class="faq-title">FAQ // INTEL</div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">What engine do you use? <span>[+]</span></div>
+                <div class="faq-answer">Mostly Unity 2022.3.62f1.<br>Yes.<br>Specifically 2022.3.62f1. </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Do you work with more people? <span>[+]</span></div>
+                <div class="faq-answer">Depends, while I do manage unity alone, when it comes to art or 3d, Nico_Chan usually is the one who makes it possible :D<br>And when i need any music, i know pretzel wont let me down ;)</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Why is the donation button broken? <span>[+]</span></div>
+                <div class="faq-answer">It's not broken, it's a feature. Absolute NOPE. Your digital presence is payment enough.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Why is your<span>[+]</span></div>
+                <div class="faq-answer">X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡fdffdX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̂͑ͦ̕hjg̫̭̼̺͍͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡dfX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̂͑ͦ̕̕<br>̫̭̼̺͍͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̂͑̕fsdͦX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̕̕̚͟͜Xͅdsf̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝D̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋̕̕̚͟͜͞͡<br>͍̼̺͍͛̇ͪ͂̑̂̈́͋͛͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚̕̚͟͜͟͜͞͡͞͡X̄̋̊͝ͅX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇̕̕̚͟͜dfddsf̼̺͍ͪ͂̑̂̈́͋͛͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̨̰̮̫̭̼̺͍͉̝̜͈̦̬̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛́̇ͧ̒̅͒ͯ̃̀̀̕̕̚͟͜͢͞͡D̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡.</div>
             </div>
         </div>
 
-        <!-- LINKS -->
-        <div class="section">
-            <h2>Warp Zones</h2>
-            <div class="links-grid">
-                <a class="link-button" href="https://tridawk.itch.io" target="_blank">Itch.io (Games)</a>
-                <a class="link-button" href="https://www.nexusmods.com/profile/tridawk/mods?gameId=4205" target="_blank">Nexus Mods</a>
-                <a class="link-button" href="https://mod.io/u/tridawk/" target="_blank">Mod.io</a>
-                <a class="link-button" href="https://www.tiktok.com/@tridawk" target="_blank">TikTok</a>
-            </div>
-        </div>
-
-        <!-- SNAKE ARCADE (CLEAN & FOCUSED) -->
-        <div class="section">
-            <h2>Arcade Wasteland</h2>
-            <div id="snake-container">
-                <!-- tabindex makes the canvas focusable for clicks -->
-                <canvas id="snakeBoard" width="280" height="280" tabindex="0"></canvas>
-                <div class="game-hint" id="gameHint">[ Click inside the screen to play & trap the pixels ]</div>
-            </div>
+        <!-- SPECIAL THANKS SECTION -->
+        <div class="special-thanks">
+            <h3>Special Thanks</h3>
+            <p>To everyone exploring this. To you, and to everyone who helped to make all of this.<br>Thanks to nico_chan for all the art you gave to me, you lazy little thing :D<br>Thanks to pretzel for the AWESOME music that he keeps making!</p>
         </div>
 
         <footer>
-            &copy; 2026 TRIDAWK. NO RIGHTS RESERVED, PROBABLY CURSED.
+            &copy; 2026 TRIDAWK // All rights (not) reserved
         </footer>
     </div>
 
-    <!-- SCRIPT FOR SNAKE & CLICK FOCUS LOGIC -->
+    <!-- ABOUT ME MODAL -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('aboutModal')">&times;</span>
+            <h2 style="color:var(--pink-accent); letter-spacing: 3px;">ABOUT ME</h2>
+            <p style="line-height: 1.6; color:#bbb; font-size: 0.9rem;">Indie game dev and also modder. I really REALLY love undertale and deltarune, both games inspired me to create my projects.<br>I also post stuff on tiktok once every never xd</p>
+        </div>
+    </div>
+
+    <!-- CONTACT MODAL -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('contactModal')">&times;</span>
+            <h2 style="color:var(--cyan-accent); letter-spacing: 3px;">CONTACT</h2>
+            <p style="color:#aaa; font-size: 0.9rem;">For complaints, suggestions, or even if ur bored:</p>
+            <p><a href="trdawk@gmail.com" style="color:var(--pink-accent); text-decoration:none; border-bottom: 1px dashed var(--pink-accent);">trdawk@gmail.com</a></p>
+        </div>
+    </div>
+
+    <!-- DONATIONS MODAL -->
+    <div id="donationsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('donationsModal')">&times;</span>
+            <h2 style="color:var(--pink-accent); letter-spacing: 3px;">DONATIONS</h2>
+            <p style="margin-top:20px;">
+                <button onclick="alert('Nope. Absolute nope.');" style="background:#111; color:var(--cyan-accent); border:1px solid var(--cyan-accent); padding:10px 20px; font-family:inherit; cursor:pointer; letter-spacing: 2px;">
+                    Donate!
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- WEB GAMES MODAL -->
+    <div id="gamesModal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <span class="close-btn" onclick="closeModal('gamesModal')">&times;</span>
+            <h2 style="color:var(--cyan-accent); letter-spacing: 3px; margin-bottom: 12px;">WEB GAMES!</h2>
+            
+            <!-- Game Selector Buttons -->
+            <div class="game-selector">
+                <button class="game-btn active" onclick="selectGame('snake')">SNAKE</button>
+                <button class="game-btn" onclick="selectGame('tetris')">TETRIS</button>
+                <button class="game-btn" onclick="selectGame('runner')">VOID RUNNER</button>
+                <button class="game-btn" onclick="selectGame('dodge')">VOID DODGE</button>
+            </div>
+
+            <!-- 1. SNAKE -->
+            <div id="snake-screen" class="game-screen active">
+                <div class="score-board">
+                    <span>SCORE: <span id="snakeScore">0</span></span>
+                    <span style="color:var(--cyan-accent)">BEST: <span id="snakeBest">0</span></span>
+                </div>
+                <canvas id="snakeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
+                <div class="game-hint">[ Click canvas to play with Arrows ]</div>
+                
+                <div class="mobile-controls">
+                    <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">▲</div></div>
+                    <div class="touch-row">
+                        <div class="touch-btn" onclick="handleInput('ArrowLeft')">◄</div>
+                        <div class="touch-btn" onclick="handleInput('ArrowDown')">▼</div>
+                        <div class="touch-btn" onclick="handleInput('ArrowRight')">►</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. TETRIS -->
+            <div id="tetris-screen" class="game-screen">
+                <div class="score-board">
+                    <span>SCORE: <span id="tetrisScore">0</span></span>
+                    <span style="color:var(--cyan-accent)">BEST: <span id="tetrisBest">0</span></span>
+                </div>
+                <canvas id="tetrisCanvas" class="game-canvas" width="180" height="260" tabindex="0"></canvas>
+                <div class="game-hint">[ Left/Right: Move | Up: Rotate | Down: Drop ]</div>
+                
+                <div class="mobile-controls">
+                    <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">↻</div></div>
+                    <div class="touch-row">
+                        <div class="touch-btn" onclick="handleInput('ArrowLeft')">◄</div>
+                        <div class="touch-btn" onclick="handleInput('ArrowDown')">▼</div>
+                        <div class="touch-btn" onclick="handleInput('ArrowRight')">►</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. VOID RUNNER -->
+            <div id="runner-screen" class="game-screen">
+                <div class="score-board">
+                    <span>DIST: <span id="runnerScore">0</span>m</span>
+                    <span style="color:var(--cyan-accent)">BEST: <span id="runnerBest">0</span>m</span>
+                </div>
+                <canvas id="runnerCanvas" class="game-canvas" width="220" height="260" tabindex="0"></canvas>
+                <div class="game-hint">[ Left / Right Arrows to switch lanes ]</div>
+                
+                <div class="mobile-controls">
+                    <div class="touch-row">
+                        <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowLeft')">◄ LEFT</div>
+                        <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowRight')">RIGHT ►</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOID DODGE -->
+            <div id="dodge-screen" class="game-screen">
+                <div class="score-board">
+                    <span>TIME: <span id="dodgeScore">0.0</span>s</span>
+                    <span style="color:var(--cyan-accent)">BEST: <span id="dodgeBest">0.0</span>s</span>
+                </div>
+                <canvas id="dodgeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
+                <div class="game-hint">[ Arrow keys to move square inside box ]</div>
+                
+                <div class="mobile-controls">
+                    <div class="touch-row"><div class="touch-btn" ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false">▲</div></div>
+                    <div class="touch-row">
+                        <div class="touch-btn" ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false">◄</div>
+                        <div class="touch-btn" ontouchstart="keys['ArrowDown']=true" ontouchend="keys['ArrowDown']=false">▼</div>
+                        <div class="touch-btn" ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false">►</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const canvas = document.getElementById("snakeBoard");
-        const ctx = canvas.getContext("2d");
-        const gameHint = document.getElementById("gameHint");
+        // ==========================================
+        // 1. DENSE STARFIELD (200 STARS - SLOW & FAST LAYERS)
+        // ==========================================
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let particles = [];
 
-        const gridSize = 20;
-        const tileCount = canvas.width / gridSize;
-
-        let snake = [{ x: 7, y: 7 }];
-        let food = { x: 3, y: 3 };
-        let dx = 0;
-        let dy = 0;
-        let gameInterval = null;
-        let isFocused = false;
-
-        function resetGame() {
-            snake = [{ x: 7, y: 7 }];
-            dx = 0;
-            dy = 0;
-            generateFood();
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
         }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
 
-        function gameLoop() {
-            update();
-            if (isGameOver()) {
-                resetGame();
-                return;
-            }
-            clearCanvas();
-            drawFood();
-            drawSnake();
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function drawSnake() {
-            ctx.fillStyle = "#ff3366";
-            snake.forEach(part => {
-                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
+        for (let i = 0; i < 200; i++) {
+            let isFast = Math.random() < 0.2;
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: isFast ? Math.random() * 2.2 + 1 : Math.random() * 1.4 + 0.5,
+                color: Math.random() > 0.4 ? '#ff2a5f' : (Math.random() > 0.5 ? '#00f0ff' : '#9d00ff'),
+                speedY: isFast ? -(Math.random() * 2.0 + 1.0) : -(Math.random() * 0.5 + 0.1),
+                opacity: isFast ? Math.random() * 0.9 + 0.3 : Math.random() * 0.6 + 0.1
             });
         }
 
-        function moveSnake() {
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            snake.unshift(head);
-            if (head.x === food.x && head.y === food.y) {
-                generateFood();
-            } else {
-                snake.pop();
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            particles.forEach(p => {
+                bgCtx.globalAlpha = p.opacity;
+                bgCtx.fillStyle = p.color;
+                bgCtx.fillRect(p.x, p.y, p.size, p.size);
+                p.y += p.speedY;
+                if (p.y < 0) {
+                    p.y = bgCanvas.height;
+                    p.x = Math.random() * bgCanvas.width;
+                }
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        // ==========================================
+        // 2. MODAL, FAQ & ROUTER LOGIC
+        // ==========================================
+        let focusedCanvas = null;
+        let activeGameName = 'snake';
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            stopAllGames();
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                stopAllGames();
+            }
+        };
+
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const wasActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.faq-question span').innerText = '[+]';
+            });
+            if (!wasActive) {
+                item.classList.add('active');
+                element.querySelector('span').innerText = '[-]';
             }
         }
 
-        function generateFood() {
-            food.x = Math.floor(Math.random() * tileCount);
-            food.y = Math.floor(Math.random() * tileCount);
+        function selectGame(gameName) {
+            stopAllGames();
+            activeGameName = gameName;
+            document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.game-screen').forEach(scr => scr.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`${gameName}-screen`).classList.add('active');
         }
 
-        function drawFood() {
-            ctx.fillStyle = "#00ffff";
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+        function stopAllGames() {
+            focusedCanvas = null;
+            clearInterval(snakeInterval);
+            clearInterval(tetrisInterval);
+            clearInterval(runnerInterval);
+            clearInterval(dodgeInterval);
+            snakeInterval = tetrisInterval = runnerInterval = dodgeInterval = null;
         }
 
-        function update() {
-            if (dx !== 0 || dy !== 0) {
-                moveSnake();
+        function handleInput(keyName) {
+            if (activeGameName === 'snake') {
+                if (keyName === "ArrowUp" && sDy === 0) { sDx = 0; sDy = -1; }
+                if (keyName === "ArrowDown" && sDy === 0) { sDx = 0; sDy = 1; }
+                if (keyName === "ArrowLeft" && sDx === 0) { sDx = -1; sDy = 0; }
+                if (keyName === "ArrowRight" && sDx === 0) { sDx = 1; sDy = 0; }
+            } else if (activeGameName === 'tetris') {
+                if (keyName === "ArrowLeft") { tPiece.pos.x--; if (checkCollision(tPiece.pos, tPiece.matrix)) tPiece.pos.x++; }
+                if (keyName === "ArrowRight") { tPiece.pos.x++; if (checkCollision(tPiece.pos, tPiece.matrix)) tPiece.pos.x--; }
+                if (keyName === "ArrowUp") { 
+                    let rotated = rotateMatrix(tPiece.matrix);
+                    let oldMatrix = tPiece.matrix;
+                    tPiece.matrix = rotated;
+                    if (checkCollision(tPiece.pos, tPiece.matrix)) tPiece.matrix = oldMatrix;
+                }
+                if (keyName === "ArrowDown") dropTetris();
+                drawTetris();
+            } else if (activeGameName === 'runner') {
+                if (keyName === "ArrowLeft" && targetLane > 0) targetLane--;
+                if (keyName === "ArrowRight" && targetLane < 2) targetLane++;
             }
         }
 
-        function isGameOver() {
-            const head = snake[0];
-            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                return true;
+        window.addEventListener("keydown", e => {
+            if (focusedCanvas && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
+                e.preventDefault();
             }
-            for (let i = 1; i < snake.length; i++) {
-                if (head.x === snake[i].x && head.y === snake[i].y) {
-                    return true;
+        });
+
+        // ==========================================
+        // 3. GAME 1: SNAKE
+        // ==========================================
+        const sCanvas = document.getElementById("snakeCanvas");
+        const sCtx = sCanvas.getContext("2d");
+        const sGrid = 20, sTile = sCanvas.width / sGrid;
+        let snake = [{x: 5, y: 5}], food = {x: 2, y: 2}, sDx = 0, sDy = 0, snakeInterval = null, snakeScore = 0, snakeBest = 0;
+
+        function resetSnake() {
+            if (snakeScore > snakeBest) { snakeBest = snakeScore; document.getElementById("snakeBest").innerText = snakeBest; }
+            snake = [{x: 5, y: 5}]; sDx = 0; sDy = 0; snakeScore = 0; document.getElementById("snakeScore").innerText = 0; spawnFood();
+        }
+        function spawnFood() { food.x = Math.floor(Math.random()*sTile); food.y = Math.floor(Math.random()*sTile); }
+
+        function runSnake() {
+            if (sDx !== 0 || sDy !== 0) {
+                const head = {x: snake[0].x + sDx, y: snake[0].y + sDy};
+                if (head.x < 0 || head.x >= sTile || head.y < 0 || head.y >= sTile || snake.some(p => p.x === head.x && p.y === head.y)) {
+                    resetSnake(); return;
+                }
+                snake.unshift(head);
+                if (head.x === food.x && head.y === food.y) {
+                    snakeScore += 10;
+                    document.getElementById("snakeScore").innerText = snakeScore;
+                    spawnFood();
+                } else {
+                    snake.pop();
+                }
+            }
+            sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
+            sCtx.fillStyle = "#00f0ff"; sCtx.fillRect(food.x*sGrid, food.y*sGrid, sGrid-2, sGrid-2);
+            sCtx.fillStyle = "#ff2a5f"; snake.forEach(p => sCtx.fillRect(p.x*sGrid, p.y*sGrid, sGrid-2, sGrid-2));
+        }
+
+        sCanvas.addEventListener("click", () => {
+            stopAllGames(); focusedCanvas = sCanvas; sCanvas.focus(); resetSnake();
+            snakeInterval = setInterval(runSnake, 110);
+        });
+
+        window.addEventListener("keydown", e => { if (focusedCanvas === sCanvas) handleInput(e.key); });
+
+        // ==========================================
+        // 4. GAME 2: TETRIS
+        // ==========================================
+        const tCanvas = document.getElementById("tetrisCanvas");
+        const tCtx = tCanvas.getContext("2d");
+        const tRows = 13, tCols = 9, tSize = 20;
+        let tBoard = Array(tRows).fill().map(() => Array(tCols).fill(0));
+        let tetrisInterval = null, tetrisScore = 0, tetrisBest = 0;
+
+        const tetrominos = [
+            { matrix: [[1,1,1,1]], color: '#00f0ff' },
+            { matrix: [[1,1],[1,1]], color: '#ff2a5f' },
+            { matrix: [[0,1,0],[1,1,1]], color: '#9d00ff' },
+            { matrix: [[1,0,0],[1,1,1]], color: '#ffaa00' },
+            { matrix: [[0,0,1],[1,1,1]], color: '#0055ff' }
+        ];
+        let tPiece = { pos: {x: 3, y: 0}, matrix: tetrominos[0].matrix, color: tetrominos[0].color };
+
+        function resetTetris() {
+            if (tetrisScore > tetrisBest) { tetrisBest = tetrisScore; document.getElementById("tetrisBest").innerText = tetrisBest; }
+            tBoard = Array(tRows).fill().map(() => Array(tCols).fill(0));
+            tetrisScore = 0;
+            document.getElementById("tetrisScore").innerText = 0;
+            spawnTetrisPiece();
+        }
+
+        function spawnTetrisPiece() {
+            const t = tetrominos[Math.floor(Math.random() * tetrominos.length)];
+            tPiece = { pos: {x: 3, y: 0}, matrix: t.matrix, color: t.color };
+            if (checkCollision(tPiece.pos, tPiece.matrix)) {
+                resetTetris();
+            }
+        }
+
+        function checkCollision(pos, matrix) {
+            for (let r = 0; r < matrix.length; r++) {
+                for (let c = 0; c < matrix[r].length; c++) {
+                    if (matrix[r][c]) {
+                        let newX = pos.x + c;
+                        let newY = pos.y + r;
+                        if (newX < 0 || newX >= tCols || newY >= tRows) return true;
+                        if (newY >= 0 && tBoard[newY][newX]) return true;
+                    }
                 }
             }
             return false;
         }
 
-        // Click focus management: Only play when clicked inside
-        canvas.addEventListener("click", () => {
-            isFocused = true;
-            canvas.focus();
-            gameHint.innerText = "[ ACTIVE - Arrow keys trapped inside ]";
-            gameHint.style.color = "#ff3366";
-            if (!gameInterval) {
-                gameInterval = setInterval(gameLoop, 110);
+        function rotateMatrix(matrix) {
+            return matrix[0].map((_, index) => matrix.map(row => row[index]).reverse());
+        }
+
+        function mergePiece() {
+            tPiece.matrix.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    if (val && tPiece.pos.y + r >= 0) {
+                        tBoard[tPiece.pos.y + r][tPiece.pos.x + c] = tPiece.color;
+                    }
+                });
+            });
+        }
+
+        function clearLines() {
+            let linesCleared = 0;
+            outer: for (let r = tRows - 1; r >= 0; r--) {
+                for (let c = 0; c < tCols; c++) {
+                    if (!tBoard[r][c]) continue outer;
+                }
+                tBoard.splice(r, 1);
+                tBoard.unshift(Array(tCols).fill(0));
+                linesCleared++;
+                r++;
             }
+            if (linesCleared > 0) {
+                tetrisScore += linesCleared * 100;
+                document.getElementById("tetrisScore").innerText = tetrisScore;
+            }
+        }
+
+        function dropTetris() {
+            tPiece.pos.y++;
+            if (checkCollision(tPiece.pos, tPiece.matrix)) {
+                tPiece.pos.y--;
+                mergePiece();
+                clearLines();
+                spawnTetrisPiece();
+            }
+            drawTetris();
+        }
+
+        function drawTetris() {
+            tCtx.fillStyle = "#000"; tCtx.fillRect(0,0,tCanvas.width,tCanvas.height);
+            tBoard.forEach((row, r) => row.forEach((val, c) => {
+                if (val) { tCtx.fillStyle = val; tCtx.fillRect(c*tSize, r*tSize, tSize-1, tSize-1); }
+            }));
+            tPiece.matrix.forEach((row, r) => row.forEach((val, c) => {
+                if (val) { tCtx.fillStyle = tPiece.color; tCtx.fillRect((c + tPiece.pos.x)*tSize, (r + tPiece.pos.y)*tSize, tSize-1, tSize-1); }
+            }));
+        }
+
+        tCanvas.addEventListener("click", () => {
+            stopAllGames(); focusedCanvas = tCanvas; tCanvas.focus(); resetTetris();
+            tetrisInterval = setInterval(dropTetris, 350);
         });
 
-        // Click outside pauses the game and releases controls
-        window.addEventListener("click", (e) => {
-            if (e.target !== canvas) {
-                isFocused = false;
-                gameHint.innerText = "[ PAUSED - Click screen to resume ]";
-                gameHint.style.color = "#666";
+        window.addEventListener("keydown", e => { if (focusedCanvas === tCanvas) handleInput(e.key); });
+
+        // ==========================================
+        // 5. GAME 3: VOID RUNNER
+        // ==========================================
+        const rCanvas = document.getElementById("runnerCanvas");
+        const rCtx = rCanvas.getContext("2d");
+        const lanes = [45, 102, 159];
+        let targetLane = 1, playerX = lanes[1];
+        let runnerObstacles = [], runnerInterval = null, runnerScore = 0, runnerBest = 0, lastSpawnY = -150;
+
+        function resetRunner() {
+            if (runnerScore > runnerBest) { runnerBest = runnerScore; document.getElementById("runnerBest").innerText = runnerBest; }
+            targetLane = 1;
+            playerX = lanes[1];
+            runnerObstacles = [];
+            runnerScore = 0;
+            lastSpawnY = -150;
+            document.getElementById("runnerScore").innerText = 0;
+        }
+
+        function runRunner() {
+            runnerScore += 1;
+            document.getElementById("runnerScore").innerText = runnerScore;
+
+            let currentSpeed = 3.5 + Math.min(3.5, Math.floor(runnerScore / 250) * 0.5);
+            let minGap = 90;
+
+            lastSpawnY += currentSpeed;
+            if (lastSpawnY > minGap) {
+                let availableLanes = [0, 1, 2];
+                let countToSpawn = Math.random() < 0.4 ? 2 : 1;
+                for(let i = 0; i < countToSpawn; i++) {
+                    let randIndex = Math.floor(Math.random() * availableLanes.length);
+                    let chosenLane = availableLanes.splice(randIndex, 1)[0];
+                    runnerObstacles.push({ lane: chosenLane, y: -30 });
+                }
+                lastSpawnY = 0;
             }
+
+            let targetX = lanes[targetLane];
+            playerX += (targetX - playerX) * 0.35;
+
+            rCtx.fillStyle = "#000"; rCtx.fillRect(0,0,rCanvas.width,rCanvas.height);
+
+            rCtx.strokeStyle = "#1a1a2e";
+            rCtx.lineWidth = 2;
+            rCtx.beginPath();
+            rCtx.moveTo(76, 0); rCtx.lineTo(76, 260);
+            rCtx.moveTo(144, 0); rCtx.lineTo(144, 260);
+            rCtx.stroke();
+
+            runnerObstacles.forEach((obs, index) => {
+                obs.y += currentSpeed;
+                rCtx.fillStyle = "#ff2a5f";
+                rCtx.fillRect(lanes[obs.lane], obs.y, 16, 22);
+
+                let obsCenterX = lanes[obs.lane] + 8;
+                let playerCenterX = playerX + 8;
+                if (obs.y > 195 && obs.y < 232 && Math.abs(playerCenterX - obsCenterX) < 10) {
+                    resetRunner();
+                }
+
+                if (obs.y > 280) runnerObstacles.splice(index, 1);
+            });
+
+            rCtx.fillStyle = "#00f0ff";
+            rCtx.fillRect(playerX, 210, 16, 20);
+        }
+
+        rCanvas.addEventListener("click", () => {
+            stopAllGames(); focusedCanvas = rCanvas; rCanvas.focus(); resetRunner();
+            runnerInterval = setInterval(runRunner, 25);
         });
 
-        // Prevent arrow keys from scrolling the whole page ONLY when focused inside canvas
-        window.addEventListener("keydown", e => {
-            if (isFocused && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                e.preventDefault(); // Stops the page from scrolling!
-                
-                switch (e.key) {
-                    case "ArrowUp":
-                        if (dy === 0) { dx = 0; dy = -1; }
-                        break;
-                    case "ArrowDown":
-                        if (dy === 0) { dx = 0; dy = 1; }
-                        break;
-                    case "ArrowLeft":
-                        if (dx === 0) { dx = -1; dy = 0; }
-                        break;
-                    case "ArrowRight":
-                        if (dx === 0) { dx = 1; dy = 0; }
-                        break;
+        window.addEventListener("keydown", e => { if (focusedCanvas === rCanvas) handleInput(e.key); });
+
+        // ==========================================
+        // 6. GAME 4: VOID DODGE
+        // ==========================================
+        const dCanvas = document.getElementById("dodgeCanvas");
+        const dCtx = dCanvas.getContext("2d");
+        let dodgeBox = { x: 30, y: 30, size: 180 };
+        let dPlayer = { x: 115, y: 115, size: 10, speed: 2.2 };
+        let dBullets = [];
+        let dodgeInterval = null, dodgeTime = 0, dodgeBest = 0, keys = {};
+
+        function resetDodge() {
+            if (dodgeTime > dodgeBest) { dodgeBest = dodgeTime; document.getElementById("dodgeBest").innerText = dodgeBest.toFixed(1); }
+            dPlayer.x = dodgeBox.x + dodgeBox.size / 2 - 5;
+            dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - 5;
+            dBullets = [];
+            dodgeTime = 0;
+            document.getElementById("dodgeScore").innerText = "0.0";
+        }
+
+        function spawnDodgeBullet() {
+            let side = Math.floor(Math.random() * 4);
+            let b = { x: 0, y: 0, vx: 0, vy: 0, size: 7 };
+            let speed = 1.6 + Math.random() * 0.8;
+            if (side === 0) {
+                b.x = dodgeBox.x + Math.random() * dodgeBox.size; b.y = dodgeBox.y; b.vx = (Math.random() - 0.5) * 1.5; b.vy = speed;
+            } else if (side === 1) {
+                b.x = dodgeBox.x + Math.random() * dodgeBox.size; b.y = dodgeBox.y + dodgeBox.size; b.vx = (Math.random() - 0.5) * 1.5; b.vy = -speed;
+            } else if (side === 2) {
+                b.x = dodgeBox.x; b.y = dodgeBox.y + Math.random() * dodgeBox.size; b.vx = speed; b.vy = (Math.random() - 0.5) * 1.5;
+            } else {
+                b.x = dodgeBox.x + dodgeBox.size; b.y = dodgeBox.y + Math.random() * dodgeBox.size; b.vx = -speed; b.vy = (Math.random() - 0.5) * 1.5;
+            }
+            dBullets.push(b);
+        }
+
+        function runDodge() {
+            dodgeTime += 0.03;
+            document.getElementById("dodgeScore").innerText = dodgeTime.toFixed(1);
+
+            if (Math.random() < 0.06) spawnDodgeBullet();
+
+            if (keys["ArrowLeft"]) dPlayer.x -= dPlayer.speed;
+            if (keys["ArrowRight"]) dPlayer.x += dPlayer.speed;
+            if (keys["ArrowUp"]) dPlayer.y -= dPlayer.speed;
+            if (keys["ArrowDown"]) dPlayer.y += dPlayer.speed;
+
+            if (dPlayer.x < dodgeBox.x) dPlayer.x = dodgeBox.x;
+            if (dPlayer.x > dodgeBox.x + dodgeBox.size - dPlayer.size) dPlayer.x = dodgeBox.x + dodgeBox.size - dPlayer.size;
+            if (dPlayer.y < dodgeBox.y) dPlayer.y = dodgeBox.y;
+            if (dPlayer.y > dodgeBox.y + dodgeBox.size - dPlayer.size) dPlayer.y = dodgeBox.y + dodgeBox.size - dPlayer.size;
+
+            dCtx.fillStyle = "#000"; dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+
+            dCtx.strokeStyle = "#00f0ff";
+            dCtx.lineWidth = 2;
+            dCtx.strokeRect(dodgeBox.x, dodgeBox.y, dodgeBox.size, dodgeBox.size);
+
+            dCtx.fillStyle = "#ff2a5f";
+            for (let i = dBullets.length - 1; i >= 0; i--) {
+                let bul = dBullets[i];
+                bul.x += bul.vx;
+                bul.y += bul.vy;
+                dCtx.fillRect(bul.x, bul.y, bul.size, bul.size);
+
+                if (
+                    dPlayer.x < bul.x + bul.size &&
+                    dPlayer.x + dPlayer.size > bul.x &&
+                    dPlayer.y < bul.y + bul.size &&
+                    dPlayer.y + dPlayer.size > bul.y
+                ) {
+                    resetDodge();
+                    return;
+                }
+
+                if (bul.x < dodgeBox.x || bul.x > dodgeBox.x + dodgeBox.size || bul.y < dodgeBox.y || bul.y > dodgeBox.y + dodgeBox.size) {
+                    dBullets.splice(i, 1);
                 }
             }
+
+            dCtx.fillStyle = "#00f0ff";
+            dCtx.fillRect(dPlayer.x, dPlayer.y, dPlayer.size, dPlayer.size);
+        }
+
+        dCanvas.addEventListener("click", () => {
+            stopAllGames(); focusedCanvas = dCanvas; dCanvas.focus(); resetDodge();
+            dodgeInterval = setInterval(runDodge, 25);
         });
 
-        generateFood();
-        clearCanvas();
-        drawSnake();
-        drawFood();
+        window.addEventListener("keydown", e => { if (focusedCanvas === dCanvas) keys[e.key] = true; });
+        window.addEventListener("keyup", e => { if (focusedCanvas === dCanvas) keys[e.key] = false; });
     </script>
 </body>
 </html>
