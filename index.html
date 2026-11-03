@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRIDAWK</title>
-    <meta name="description" content="Sitio oficial de Tridawk. Videojuegos, mods y proyectos indie.">
+    <meta name="description" content="Official site of Tridawk. Indie games, mods, and void explorations.">
     <style>
         :root {
             --bg-color: #08080a;
@@ -28,56 +28,133 @@
         .container {
             max-width: 650px;
             width: 100%;
-            padding: 50px 20px;
+            padding: 30px 20px;
             box-sizing: border-box;
             text-align: center;
         }
 
+        /* Banner & Logo */
+        .banner-container {
+            width: 100%;
+            max-height: 180px;
+            overflow: hidden;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .banner-container img {
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .logo-container {
+            margin-bottom: 15px;
+        }
+
+        .logo-container img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            object-fit: cover;
+        }
+
         h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             letter-spacing: 6px;
             color: #fff;
-            margin-bottom: 5px;
+            margin: 5px 0;
             text-transform: uppercase;
         }
 
         .subtitle {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #777;
             text-transform: uppercase;
             letter-spacing: 3px;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
+        }
+
+        /* Dropdown Menu Style */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .dropbtn {
+            background-color: #111;
+            color: var(--accent-color);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', Courier, monospace;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #111;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            z-index: 1;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dropdown-content a, .dropdown-content .dropdown-text {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #1a1a1a;
+            box-sizing: border-box;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #1a1a1a;
+            color: var(--accent-color);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
         }
 
         .section {
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             border-top: 1px solid var(--border-color);
             padding-top: 25px;
         }
 
         h2 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .links-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         a.link-button {
             display: block;
             background: #111;
             color: #fff;
-            padding: 12px 20px;
+            padding: 10px 20px;
             text-decoration: none;
             border: 1px solid var(--border-color);
             letter-spacing: 1px;
             transition: all 0.2s ease;
+            font-size: 0.9rem;
         }
 
         a.link-button:hover {
@@ -86,12 +163,13 @@
             background: #151518;
         }
 
-        /* Estilos para el minijuego de Snake */
+        /* Snake Game styles */
         #snake-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 10px;
+            outline: none;
         }
 
         canvas {
@@ -99,23 +177,18 @@
             background-color: #000;
             max-width: 100%;
             height: auto;
-        }
-
-        .score {
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 10px;
+            cursor: pointer;
         }
 
         .game-hint {
             font-size: 0.75rem;
-            color: #555;
+            color: #666;
             margin-top: 8px;
         }
 
         footer {
             margin-top: auto;
-            padding: 30px 0;
+            padding: 20px 0;
             font-size: 0.75rem;
             color: #444;
             letter-spacing: 1px;
@@ -124,74 +197,90 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Tridawk</h1>
-        <div class="subtitle">Indie Game Developer & Modder</div>
+    <!-- BANNER -->
+    <div class="banner-container">
+        <!-- Reemplaza el enlace de abajo por la imagen de tu banner -->
+        <img src="https://picsum.photos/1200/300?blur=2" alt="Tridawk Banner">
+    </div>
 
-        <!-- ENLACES -->
+    <div class="container">
+        <!-- LOGO -->
+        <div class="logo-container">
+            <!-- Reemplaza el enlace de abajo por tu logo real -->
+            <img src="https://picsum.photos/200" alt="Tridawk Logo">
+        </div>
+
+        <h1>Tridawk</h1>
+        <div class="subtitle">Indie Developer & Modder</div>
+
+        <!-- DROPDOWN MENU -->
+        <div class="dropdown">
+            <button class="dropbtn">Menu ▼</button>
+            <div class="dropdown-content">
+                <div class="dropdown-text"><strong>About Me:</strong> I'll complete this someday.</div>
+                <a href="mailto:tridawk@example.com">Contact: never</a>
+                <a href="#" onclick="alert('Nope. Absolute nope.'); return false;">Donate: (nope)</a>
+            </div>
+        </div>
+
+        <!-- LINKS -->
         <div class="section">
-            <h2>Enlaces & Proyectos</h2>
+            <h2>Warp Zones</h2>
             <div class="links-grid">
-                <a class="link-button" href="https://tridawk.itch.io" target="_blank">Itch.io (Juegos)</a>
+                <a class="link-button" href="https://tridawk.itch.io" target="_blank">Itch.io (Games)</a>
                 <a class="link-button" href="https://www.nexusmods.com/profile/tridawk/mods?gameId=4205" target="_blank">Nexus Mods</a>
                 <a class="link-button" href="https://mod.io/u/tridawk/" target="_blank">Mod.io</a>
                 <a class="link-button" href="https://www.tiktok.com/@tridawk" target="_blank">TikTok</a>
             </div>
         </div>
 
-        <!-- MINIJUEGO DE SNAKE -->
+        <!-- SNAKE ARCADE (CLEAN & FOCUSED) -->
         <div class="section">
-            <h2>Arcade / Zona de vicio</h2>
+            <h2>Arcade Wasteland</h2>
             <div id="snake-container">
-                <div class="score">Puntuación: <span id="score">0</span></div>
-                <canvas id="snakeBoard" width="300" height="300"></canvas>
-                <div class="game-hint">Usa las flechas del teclado para jugar</div>
+                <!-- tabindex makes the canvas focusable for clicks -->
+                <canvas id="snakeBoard" width="280" height="280" tabindex="0"></canvas>
+                <div class="game-hint" id="gameHint">[ Click inside the screen to play & trap the pixels ]</div>
             </div>
         </div>
 
         <footer>
-            &copy; 2026 TRIDAWK. ALL RIGHTS RESERVED.
+            &copy; 2026 TRIDAWK. NO RIGHTS RESERVED, PROBABLY CURSED.
         </footer>
     </div>
 
-    <!-- SCRIPT DEL MINIJUEGO SNAKE -->
+    <!-- SCRIPT FOR SNAKE & CLICK FOCUS LOGIC -->
     <script>
         const canvas = document.getElementById("snakeBoard");
         const ctx = canvas.getContext("2d");
-        const scoreElement = document.getElementById("score");
+        const gameHint = document.getElementById("gameHint");
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        let snake = [{ x: 10, y: 10 }];
-        let food = { x: 5, y: 5 };
+        let snake = [{ x: 7, y: 7 }];
+        let food = { x: 3, y: 3 };
         let dx = 0;
         let dy = 0;
-        let score = 0;
-        let gameInterval;
-        let gameStarted = false;
+        let gameInterval = null;
+        let isFocused = false;
+
+        function resetGame() {
+            snake = [{ x: 7, y: 7 }];
+            dx = 0;
+            dy = 0;
+            generateFood();
+        }
 
         function gameLoop() {
             update();
             if (isGameOver()) {
-                alert("¡Game Over! Puntuación: " + score);
                 resetGame();
                 return;
             }
             clearCanvas();
             drawFood();
             drawSnake();
-        }
-
-        function resetGame() {
-            snake = [{ x: 10, y: 10 }];
-            dx = 0;
-            dy = 0;
-            score = 0;
-            scoreElement.innerText = score;
-            generateFood();
-            gameStarted = false;
-            clearInterval(gameInterval);
         }
 
         function clearCanvas() {
@@ -210,8 +299,6 @@
             const head = { x: snake[0].x + dx, y: snake[0].y + dy };
             snake.unshift(head);
             if (head.x === food.x && head.y === food.y) {
-                score += 10;
-                scoreElement.innerText = score;
                 generateFood();
             } else {
                 snake.pop();
@@ -247,24 +334,45 @@
             return false;
         }
 
-        window.addEventListener("keydown", e => {
-            if (!gameStarted && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                gameStarted = true;
-                gameInterval = setInterval(gameLoop, 100);
+        // Click focus management: Only play when clicked inside
+        canvas.addEventListener("click", () => {
+            isFocused = true;
+            canvas.focus();
+            gameHint.innerText = "[ ACTIVE - Arrow keys trapped inside ]";
+            gameHint.style.color = "#ff3366";
+            if (!gameInterval) {
+                gameInterval = setInterval(gameLoop, 110);
             }
-            switch (e.key) {
-                case "ArrowUp":
-                    if (dy === 0) { dx = 0; dy = -1; }
-                    break;
-                case "ArrowDown":
-                    if (dy === 0) { dx = 0; dy = 1; }
-                    break;
-                case "ArrowLeft":
-                    if (dx === 0) { dx = -1; dy = 0; }
-                    break;
-                case "ArrowRight":
-                    if (dx === 0) { dx = 1; dy = 0; }
-                    break;
+        });
+
+        // Click outside pauses the game and releases controls
+        window.addEventListener("click", (e) => {
+            if (e.target !== canvas) {
+                isFocused = false;
+                gameHint.innerText = "[ PAUSED - Click screen to resume ]";
+                gameHint.style.color = "#666";
+            }
+        });
+
+        // Prevent arrow keys from scrolling the whole page ONLY when focused inside canvas
+        window.addEventListener("keydown", e => {
+            if (isFocused && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                e.preventDefault(); // Stops the page from scrolling!
+                
+                switch (e.key) {
+                    case "ArrowUp":
+                        if (dy === 0) { dx = 0; dy = -1; }
+                        break;
+                    case "ArrowDown":
+                        if (dy === 0) { dx = 0; dy = 1; }
+                        break;
+                    case "ArrowLeft":
+                        if (dx === 0) { dx = -1; dy = 0; }
+                        break;
+                    case "ArrowRight":
+                        if (dx === 0) { dx = 1; dy = 0; }
+                        break;
+                }
             }
         });
 
