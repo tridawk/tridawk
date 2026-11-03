@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tridawk</title>
 
-    <link rel="icon" type="image/png" sizes="48x48" href="logo.png">[cite: 3]
+    <link rel="icon" type="image/png" sizes="48x48" href="logo.png">
     
-    <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">[cite: 3]
+    <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">
     <style>
         :root {
             --bg-color: #040406;
@@ -67,19 +67,6 @@
             font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
-        }
-
-        /* Minimizar el logo automáticamente en móviles por defecto */
-        @media (max-width: 768px) {
-            #logo-corner {
-                height: 30px;
-                width: 70px;
-                box-shadow: 0 0 6px var(--cyan-accent);
-                cursor: pointer;
-            }
-            #logo-corner img {
-                display: none;
-            }
         }
 
         .window-controls {
@@ -693,7 +680,12 @@
     </div>
 
     <script>
-        // Toggle window logicxd
+        
+        if (window.innerWidth <= 768) {
+            document.getElementById('logo-corner').classList.add('minimized');
+        }
+
+        // Toggle window logic
         function toggleLogoWindow() {
             const logoWin = document.getElementById('logo-corner');
             logoWin.classList.toggle('minimized');
@@ -750,7 +742,7 @@
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             stopAllGames();
-            // Poner en gris los controles de todos los juegos al cerrar el modal
+
             document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
         }
 
@@ -781,13 +773,11 @@
             document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.game-screen').forEach(scr => scr.classList.remove('active'));
             
-            // Poner en gris los controles al cambiar de juego hasta que se haga click en el canvas
             document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
 
             event.target.classList.add('active');
             document.getElementById(`${gameName}-screen`).classList.add('active');
 
-            // Reset target game state to start completely fresh without resetting High Scores
             if (gameName === 'snake') resetSnakeState();
             if (gameName === 'tetris') resetTetrisState();
             if (gameName === 'runner') resetRunnerState();
@@ -1068,7 +1058,7 @@
 
         rCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = rCanvas; rCanvas.focus(); resetRunnerState();
-            document.getElementById("runner-controls").classList.remove('disabled-controls'); // Activa controles
+            document.getElementById("runner-controls").classList.remove('disabled-controls'); 
             runnerInterval = setInterval(runRunner, 25);
         });
 
@@ -1164,7 +1154,7 @@
 
         dCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = dCanvas; dCanvas.focus(); resetDodgeState();
-            document.getElementById("dodge-controls").classList.remove('disabled-controls'); // Activa controles
+            document.getElementById("dodge-controls").classList.remove('disabled-controls'); 
             dodgeInterval = setInterval(runDodge, 25);
         });
 
