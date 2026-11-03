@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRIDAWK</title>
+
+    <link rel="icon" type="image/png" href="logo.png" onerror="this.href='https://i.ibb.co/4g9LCgdz/starcawtsmolnolyrics.png'">
+    
     <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">
     <style>
         :root {
@@ -29,7 +32,7 @@
             user-select: none;
         }
 
-        /* Top Right Corner Square Logo (XXL) */
+        /*logo*/
         #logo-corner {
             position: absolute;
             top: 20px;
@@ -41,15 +44,64 @@
             overflow: hidden;
             z-index: 10;
             background: #000;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #logo-corner.minimized {
+            height: 30px;
+            width: 70px;
+            box-shadow: 0 0 6px var(--cyan-accent);
+            cursor: pointer;
+        }
+
+        .window-titlebar {
+            background: var(--cyan-accent);
+            color: #000;
+            height: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .win-btn {
+            background: none;
+            border: none;
+            color: #000;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 0 3px;
+            line-height: 1;
+        }
+
+        .win-btn:hover {
+            color: var(--pink-accent);
         }
 
         #logo-corner img {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 22px);
             object-fit: cover;
+            transition: opacity 0.2s;
         }
 
-        /* Animated background canvas */
+        #logo-corner.minimized img {
+            display: none;
+        }
+
+        /*background */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -69,7 +121,7 @@
             z-index: 1;
         }
 
-        /* Neon Title with Glitch effect */
+        /*neoneffect*/
         h1 {
             font-size: 4rem;
             letter-spacing: 14px;
@@ -98,7 +150,7 @@
             text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
         }
 
-        /* Top Nav Bar */
+        /*nav bar */
         .nav-bar {
             margin-bottom: 40px;
             font-size: 0.95rem;
@@ -407,17 +459,24 @@
 </head>
 <body>
 
-    <!-- TOP RIGHT CORNER SQUARE LOGO (200x200) -->
+    <!-- LOGO-->
     <div id="logo-corner">
+        <div class="window-titlebar" onclick="toggleLogoWindow()">
+            <span>LOGO.EXE</span>
+            <div class="window-controls">
+                <button class="win-btn" onclick="toggleLogoWindow(); event.stopPropagation();">_</button>
+                <button class="win-btn" onclick="toggleLogoWindow(); event.stopPropagation();">□</button>
+            </div>
+        </div>
         <img src="logo.png" alt="Tridawk Logo" onerror="this.src='https://i.ibb.co/4g9LCgdz/starcawtsmolnolyrics.png'">
     </div>
 
-    <!-- Dynamic Animated Particle Background -->
+    <!-- Particle Background -->
     <canvas id="bgCanvas"></canvas>
 
     <div class="container">
         <h1>TRIDAWK</h1>
-        <div class="subtitle">Game dev and modder</div>
+        <div class="subtitle">Game Developer & Modder</div>
 
         <!-- Top Navigation -->
         <div class="nav-bar">
@@ -448,9 +507,10 @@
                 <span>MOD.IO</span>
                 <span class="icon-box"></span>
             </a>
+
             <a class="link-row" href="https://steamcommunity.com/id/tridawk/" target="_blank">
                 <span class="icon-box"></span>
-                <span>Steam</span>
+                <span>STEAM</span>
             </a>
         </div>
 
@@ -460,12 +520,12 @@
             
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFaq(this)">What engine do you use? <span>[+]</span></div>
-                <div class="faq-answer">Mostly Unity 2022.3.62f1.<br>Yes.<br>Specifically 2022.3.62f1. </div>
+                <div class="faq-answer">Mostly Unity 2022.3.62f1.<br>Yes.<br>Specifically 2022.3.62f1.</div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Do you work with more people? <span>[+]</span></div>
-                <div class="faq-answer">Depends, while I do manage unity alone, when it comes to art or 3d, Nico_Chan usually is the one who makes it possible :D<br>And when i need any music, i know pretzel wont let me down ;)</div>
+                <div class="faq-question" onclick="toggleFaq(this)">Do you work with other people? <span>[+]</span></div>
+                <div class="faq-answer">It depends. While I manage Unity development alone, when it comes to art or 3D assets, Nico_Chan is usually the one who makes it happen! :D<br>And whenever I need music, I know Pretzel won't let me down ;)</div>
             </div>
 
             <div class="faq-item">
@@ -474,7 +534,7 @@
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Why is your<span>[+]</span></div>
+                <div class="faq-question" onclick="toggleFaq(this)">Why are <span>[+]</span></div>
                 <div class="faq-answer">X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡fdffdX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̂͑ͦ̕hjg̫̭̼̺͍͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡dfX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̂͑ͦ̕̕<br>̫̭̼̺͍͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̂͑̕fsdͦX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̕̕̚͟͜Xͅdsf̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝D̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋̕̕̚͟͜͞͡<br>͍̼̺͍͛̇ͪ͂̑̂̈́͋͛͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚̕̚͟͜͟͜͞͡͞͡X̄̋̊͝ͅX̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇̕̕̚͟͜dfddsf̼̺͍ͪ͂̑̂̈́͋͛͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡X̨͉̝̜͈̦̬̄̋̊́̇ͧ̒̅͒ͯ̃̀̀͢͝ͅD̨̰̮̫̭̼̺͍͉̝̜͈̦̬̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛́̇ͧ̒̅͒ͯ̃̀̀̕̕̚͟͜͢͞͡D̰̮̫̭̼̺͍̂͑ͦ͐̑ͧ̑̒ͨ̒͊͆̇ͪ͂̑̂̈́͋͛̕̕̚͟͜͞͡.</div>
             </div>
         </div>
@@ -482,7 +542,7 @@
         <!-- SPECIAL THANKS SECTION -->
         <div class="special-thanks">
             <h3>Special Thanks</h3>
-            <p>To everyone exploring this. To you, and to everyone who helped to make all of this.<br>Thanks to nico_chan for all the art you gave to me, you lazy little thing :D<br>Thanks to pretzel for the AWESOME music that he keeps making!</p>
+            <p>To everyone exploring this page, and to everyone who helped bring all of this to life.<br>Thanks to Nico_Chan for all the art you made for me, you lazy little thing! :D<br>Thanks to Pretzel for the AWESOME music he keeps producing!</p>
         </div>
 
         <footer>
@@ -495,7 +555,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('aboutModal')">&times;</span>
             <h2 style="color:var(--pink-accent); letter-spacing: 3px;">ABOUT ME</h2>
-            <p style="line-height: 1.6; color:#bbb; font-size: 0.9rem;">Indie game dev and also modder. I really REALLY love undertale and deltarune, both games inspired me to create my projects.<br>I also post stuff on tiktok once every never xd</p>
+            <p style="line-height: 1.6; color:#bbb; font-size: 0.9rem;">Indie game developer and modder. I really, REALLY love Undertale and Deltarune—both games inspired me to create my own projects.<br>I also post stuff on TikTok once every never xd</p>
         </div>
     </div>
 
@@ -504,8 +564,8 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('contactModal')">&times;</span>
             <h2 style="color:var(--cyan-accent); letter-spacing: 3px;">CONTACT</h2>
-            <p style="color:#aaa; font-size: 0.9rem;">For complaints, suggestions, or even if ur bored:</p>
-            <p><a href="trdawk@gmail.com" style="color:var(--pink-accent); text-decoration:none; border-bottom: 1px dashed var(--pink-accent);">trdawk@gmail.com</a></p>
+            <p style="color:#aaa; font-size: 0.9rem;">For complaints, suggestions, or even if you're just bored:</p>
+            <p><a href="mailto:trdawk@gmail.com" style="color:var(--pink-accent); text-decoration:none; border-bottom: 1px dashed var(--pink-accent);">trdawk@gmail.com</a></p>
         </div>
     </div>
 
@@ -530,10 +590,10 @@
             
             <!-- Game Selector Buttons -->
             <div class="game-selector">
-                <button class="game-btn active" onclick="selectGame('snake')">SNAKE</button>
-                <button class="game-btn" onclick="selectGame('tetris')">TETRIS</button>
-                <button class="game-btn" onclick="selectGame('runner')">VOID RUNNER</button>
-                <button class="game-btn" onclick="selectGame('dodge')">VOID DODGE</button>
+                <button class="game-btn active" onclick="selectGame('snake')">SNEIK</button>
+                <button class="game-btn" onclick="selectGame('tetris')">TETORIS</button>
+                <button class="game-btn" onclick="selectGame('runner')">RUNNER</button>
+                <button class="game-btn" onclick="selectGame('dodge')">DODGEBALL</button>
             </div>
 
             <!-- 1. SNAKE -->
@@ -562,7 +622,7 @@
                     <span style="color:var(--cyan-accent)">BEST: <span id="tetrisBest">0</span></span>
                 </div>
                 <canvas id="tetrisCanvas" class="game-canvas" width="180" height="260" tabindex="0"></canvas>
-                <div class="game-hint">[ Left/Right: Move | Up: Rotate | Down: Drop ]</div>
+                <div class="game-hint">Click to play with <br>[ Left/Right: Move | Up: Rotate | Down: Drop ]</div>
                 
                 <div class="mobile-controls">
                     <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">↻</div></div>
@@ -581,7 +641,7 @@
                     <span style="color:var(--cyan-accent)">BEST: <span id="runnerBest">0</span>m</span>
                 </div>
                 <canvas id="runnerCanvas" class="game-canvas" width="220" height="260" tabindex="0"></canvas>
-                <div class="game-hint">[ Left / Right Arrows to switch lanes ]</div>
+                <div class="game-hint">Click to play with <br>[ Left / Right Arrows to switch lanes ]</div>
                 
                 <div class="mobile-controls">
                     <div class="touch-row">
@@ -598,7 +658,7 @@
                     <span style="color:var(--cyan-accent)">BEST: <span id="dodgeBest">0.0</span>s</span>
                 </div>
                 <canvas id="dodgeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
-                <div class="game-hint">[ Arrow keys to move square inside box ]</div>
+                <div class="game-hint">Click to play with <br>[ Arrow keys to move square inside box ]</div>
                 
                 <div class="mobile-controls">
                     <div class="touch-row"><div class="touch-btn" ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false">▲</div></div>
@@ -613,9 +673,13 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. DENSE STARFIELD (200 STARS - SLOW & FAST LAYERS)
-        // ==========================================
+        // Toggle window logicxd
+        function toggleLogoWindow() {
+            const logoWin = document.getElementById('logo-corner');
+            logoWin.classList.toggle('minimized');
+        }
+
+        // starhshssss
         const bgCanvas = document.getElementById('bgCanvas');
         const bgCtx = bgCanvas.getContext('2d');
         let particles = [];
@@ -655,9 +719,7 @@
         }
         animateBg();
 
-        // ==========================================
-        // 2. MODAL, FAQ & ROUTER LOGIC
-        // ==========================================
+        //modal faq and logic
         let focusedCanvas = null;
         let activeGameName = 'snake';
 
@@ -698,6 +760,12 @@
 
             event.target.classList.add('active');
             document.getElementById(`${gameName}-screen`).classList.add('active');
+
+            // Reset target game state to start completely fresh without resetting High Scores
+            if (gameName === 'snake') resetSnakeState();
+            if (gameName === 'tetris') resetTetrisState();
+            if (gameName === 'runner') resetRunnerState();
+            if (gameName === 'dodge') resetDodgeState();
         }
 
         function stopAllGames() {
@@ -738,18 +806,26 @@
             }
         });
 
-        // ==========================================
-        // 3. GAME 1: SNAKE
-        // ==========================================
+        // sneik
         const sCanvas = document.getElementById("snakeCanvas");
         const sCtx = sCanvas.getContext("2d");
         const sGrid = 20, sTile = sCanvas.width / sGrid;
         let snake = [{x: 5, y: 5}], food = {x: 2, y: 2}, sDx = 0, sDy = 0, snakeInterval = null, snakeScore = 0, snakeBest = 0;
 
+        function resetSnakeState() {
+            snake = [{x: 5, y: 5}]; sDx = 0; sDy = 0; snakeScore = 0; 
+            document.getElementById("snakeScore").innerText = 0; 
+            spawnFood();
+            sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
+            sCtx.fillStyle = "#00f0ff"; sCtx.fillRect(food.x*sGrid, food.y*sGrid, sGrid-2, sGrid-2);
+            sCtx.fillStyle = "#ff2a5f"; snake.forEach(p => sCtx.fillRect(p.x*sGrid, p.y*sGrid, sGrid-2, sGrid-2));
+        }
+
         function resetSnake() {
             if (snakeScore > snakeBest) { snakeBest = snakeScore; document.getElementById("snakeBest").innerText = snakeBest; }
-            snake = [{x: 5, y: 5}]; sDx = 0; sDy = 0; snakeScore = 0; document.getElementById("snakeScore").innerText = 0; spawnFood();
+            resetSnakeState();
         }
+
         function spawnFood() { food.x = Math.floor(Math.random()*sTile); food.y = Math.floor(Math.random()*sTile); }
 
         function runSnake() {
@@ -760,7 +836,7 @@
                 }
                 snake.unshift(head);
                 if (head.x === food.x && head.y === food.y) {
-                    snakeScore += 10;
+                    snakeScore += 1;
                     document.getElementById("snakeScore").innerText = snakeScore;
                     spawnFood();
                 } else {
@@ -773,15 +849,13 @@
         }
 
         sCanvas.addEventListener("click", () => {
-            stopAllGames(); focusedCanvas = sCanvas; sCanvas.focus(); resetSnake();
+            stopAllGames(); focusedCanvas = sCanvas; sCanvas.focus(); resetSnakeState();
             snakeInterval = setInterval(runSnake, 110);
         });
 
         window.addEventListener("keydown", e => { if (focusedCanvas === sCanvas) handleInput(e.key); });
 
-        // ==========================================
-        // 4. GAME 2: TETRIS
-        // ==========================================
+        // tetoris
         const tCanvas = document.getElementById("tetrisCanvas");
         const tCtx = tCanvas.getContext("2d");
         const tRows = 13, tCols = 9, tSize = 20;
@@ -797,12 +871,17 @@
         ];
         let tPiece = { pos: {x: 3, y: 0}, matrix: tetrominos[0].matrix, color: tetrominos[0].color };
 
-        function resetTetris() {
-            if (tetrisScore > tetrisBest) { tetrisBest = tetrisScore; document.getElementById("tetrisBest").innerText = tetrisBest; }
+        function resetTetrisState() {
             tBoard = Array(tRows).fill().map(() => Array(tCols).fill(0));
             tetrisScore = 0;
             document.getElementById("tetrisScore").innerText = 0;
             spawnTetrisPiece();
+            drawTetris();
+        }
+
+        function resetTetris() {
+            if (tetrisScore > tetrisBest) { tetrisBest = tetrisScore; document.getElementById("tetrisBest").innerText = tetrisBest; }
+            resetTetrisState();
         }
 
         function spawnTetrisPiece() {
@@ -880,29 +959,34 @@
         }
 
         tCanvas.addEventListener("click", () => {
-            stopAllGames(); focusedCanvas = tCanvas; tCanvas.focus(); resetTetris();
+            stopAllGames(); focusedCanvas = tCanvas; tCanvas.focus(); resetTetrisState();
             tetrisInterval = setInterval(dropTetris, 350);
         });
 
         window.addEventListener("keydown", e => { if (focusedCanvas === tCanvas) handleInput(e.key); });
 
-        // ==========================================
-        // 5. GAME 3: VOID RUNNER
-        // ==========================================
+        // runner
         const rCanvas = document.getElementById("runnerCanvas");
         const rCtx = rCanvas.getContext("2d");
         const lanes = [45, 102, 159];
         let targetLane = 1, playerX = lanes[1];
         let runnerObstacles = [], runnerInterval = null, runnerScore = 0, runnerBest = 0, lastSpawnY = -150;
 
-        function resetRunner() {
-            if (runnerScore > runnerBest) { runnerBest = runnerScore; document.getElementById("runnerBest").innerText = runnerBest; }
+        function resetRunnerState() {
             targetLane = 1;
             playerX = lanes[1];
             runnerObstacles = [];
             runnerScore = 0;
             lastSpawnY = -150;
             document.getElementById("runnerScore").innerText = 0;
+            rCtx.fillStyle = "#000"; rCtx.fillRect(0,0,rCanvas.width,rCanvas.height);
+            rCtx.strokeStyle = "#1a1a2e"; rCtx.lineWidth = 2; rCtx.beginPath(); rCtx.moveTo(76, 0); rCtx.lineTo(76, 260); rCtx.moveTo(144, 0); rCtx.lineTo(144, 260); rCtx.stroke();
+            rCtx.fillStyle = "#00f0ff"; rCtx.fillRect(playerX, 210, 16, 20);
+        }
+
+        function resetRunner() {
+            if (runnerScore > runnerBest) { runnerBest = runnerScore; document.getElementById("runnerBest").innerText = runnerBest; }
+            resetRunnerState();
         }
 
         function runRunner() {
@@ -955,15 +1039,13 @@
         }
 
         rCanvas.addEventListener("click", () => {
-            stopAllGames(); focusedCanvas = rCanvas; rCanvas.focus(); resetRunner();
+            stopAllGames(); focusedCanvas = rCanvas; rCanvas.focus(); resetRunnerState();
             runnerInterval = setInterval(runRunner, 25);
         });
 
         window.addEventListener("keydown", e => { if (focusedCanvas === rCanvas) handleInput(e.key); });
 
-        // ==========================================
-        // 6. GAME 4: VOID DODGE
-        // ==========================================
+        // dodgin
         const dCanvas = document.getElementById("dodgeCanvas");
         const dCtx = dCanvas.getContext("2d");
         let dodgeBox = { x: 30, y: 30, size: 180 };
@@ -971,13 +1053,20 @@
         let dBullets = [];
         let dodgeInterval = null, dodgeTime = 0, dodgeBest = 0, keys = {};
 
-        function resetDodge() {
-            if (dodgeTime > dodgeBest) { dodgeBest = dodgeTime; document.getElementById("dodgeBest").innerText = dodgeBest.toFixed(1); }
+        function resetDodgeState() {
             dPlayer.x = dodgeBox.x + dodgeBox.size / 2 - 5;
             dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - 5;
             dBullets = [];
             dodgeTime = 0;
             document.getElementById("dodgeScore").innerText = "0.0";
+            dCtx.fillStyle = "#000"; dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+            dCtx.strokeStyle = "#00f0ff"; dCtx.lineWidth = 2; dCtx.strokeRect(dodgeBox.x, dodgeBox.y, dodgeBox.size, dodgeBox.size);
+            dCtx.fillStyle = "#00f0ff"; dCtx.fillRect(dPlayer.x, dPlayer.y, dPlayer.size, dPlayer.size);
+        }
+
+        function resetDodge() {
+            if (dodgeTime > dodgeBest) { dodgeBest = dodgeTime; document.getElementById("dodgeBest").innerText = dodgeBest.toFixed(1); }
+            resetDodgeState();
         }
 
         function spawnDodgeBullet() {
@@ -1045,7 +1134,7 @@
         }
 
         dCanvas.addEventListener("click", () => {
-            stopAllGames(); focusedCanvas = dCanvas; dCanvas.focus(); resetDodge();
+            stopAllGames(); focusedCanvas = dCanvas; dCanvas.focus(); resetDodgeState();
             dodgeInterval = setInterval(runDodge, 25);
         });
 
