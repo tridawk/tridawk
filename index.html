@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRIDAWK</title>
 
-    <link rel="icon" type="image/png" href="logo.png" onerror="this.href='https://i.ibb.co/4g9LCgdz/starcawtsmolnolyrics.png'">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23000%22 stroke=%22%2300f0ff%22 stroke-width=%2215%22/%3E%3Ctext x=%2250%%22 y=%2258%%22 font-size=%2255%22 font-family=%22monospace%22 font-weight=%22bold%22 fill=%22%2300f0ff%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ET%3C/text%3E%3C/svg%3E">
     
     <meta name="description" content="Official website of Tridawk. Indie developer, mods, and web games.">
     <style>
@@ -413,6 +413,13 @@
             gap: 5px;
             margin-top: 12px;
             width: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        /* deactivated*/
+        .mobile-controls.disabled-controls {
+            opacity: 0.25;
+            pointer-events: none;
         }
 
         @media (hover: hover) and (pointer: fine) {
@@ -555,7 +562,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('aboutModal')">&times;</span>
             <h2 style="color:var(--pink-accent); letter-spacing: 3px;">ABOUT ME</h2>
-            <p style="line-height: 1.6; color:#bbb; font-size: 0.9rem;">Indie game developer and modder. I really, REALLY love Undertale and Deltarune—both games inspired me to create my own projects.<br>I also post stuff on TikTok once every never xd</p>
+            <p style="line-height: 1.6; color:#bbb; font-size: 0.9rem;">Indie game developer and modder. I really, REALLY love Undertale and Deltarune, both games inspired me to create my own projects.<br>I also post stuff on TikTok once every never xd</p>
         </div>
     </div>
 
@@ -596,7 +603,7 @@
                 <button class="game-btn" onclick="selectGame('dodge')">DODGEBALL</button>
             </div>
 
-            <!-- 1. SNAKE -->
+            <!-- 1. sneik -->
             <div id="snake-screen" class="game-screen active">
                 <div class="score-board">
                     <span>SCORE: <span id="snakeScore">0</span></span>
@@ -605,7 +612,7 @@
                 <canvas id="snakeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
                 <div class="game-hint">[ Click canvas to play with Arrows ]</div>
                 
-                <div class="mobile-controls">
+                <div id="snake-controls" class="mobile-controls disabled-controls">
                     <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">▲</div></div>
                     <div class="touch-row">
                         <div class="touch-btn" onclick="handleInput('ArrowLeft')">◄</div>
@@ -615,7 +622,7 @@
                 </div>
             </div>
 
-            <!-- 2. TETRIS -->
+            <!-- 2. tetoris -->
             <div id="tetris-screen" class="game-screen">
                 <div class="score-board">
                     <span>SCORE: <span id="tetrisScore">0</span></span>
@@ -624,7 +631,7 @@
                 <canvas id="tetrisCanvas" class="game-canvas" width="180" height="260" tabindex="0"></canvas>
                 <div class="game-hint">Click to play with <br>[ Left/Right: Move | Up: Rotate | Down: Drop ]</div>
                 
-                <div class="mobile-controls">
+                <div id="tetris-controls" class="mobile-controls disabled-controls">
                     <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">↻</div></div>
                     <div class="touch-row">
                         <div class="touch-btn" onclick="handleInput('ArrowLeft')">◄</div>
@@ -634,7 +641,7 @@
                 </div>
             </div>
 
-            <!-- 3. VOID RUNNER -->
+            <!-- 3. RUNNER -->
             <div id="runner-screen" class="game-screen">
                 <div class="score-board">
                     <span>DIST: <span id="runnerScore">0</span>m</span>
@@ -643,7 +650,7 @@
                 <canvas id="runnerCanvas" class="game-canvas" width="220" height="260" tabindex="0"></canvas>
                 <div class="game-hint">Click to play with <br>[ Left / Right Arrows to switch lanes ]</div>
                 
-                <div class="mobile-controls">
+                <div id="runner-controls" class="mobile-controls disabled-controls">
                     <div class="touch-row">
                         <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowLeft')">◄ LEFT</div>
                         <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowRight')">RIGHT ►</div>
@@ -651,7 +658,7 @@
                 </div>
             </div>
 
-            <!-- 4. VOID DODGE -->
+            <!-- 4. dodge -->
             <div id="dodge-screen" class="game-screen">
                 <div class="score-board">
                     <span>TIME: <span id="dodgeScore">0.0</span>s</span>
@@ -660,7 +667,7 @@
                 <canvas id="dodgeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
                 <div class="game-hint">Click to play with <br>[ Arrow keys to move square inside box ]</div>
                 
-                <div class="mobile-controls">
+                <div id="dodge-controls" class="mobile-controls disabled-controls">
                     <div class="touch-row"><div class="touch-btn" ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false">▲</div></div>
                     <div class="touch-row">
                         <div class="touch-btn" ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false">◄</div>
@@ -730,12 +737,15 @@
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             stopAllGames();
+            // Poner en gris los controles de todos los juegos al cerrar el modal
+            document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
         }
 
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
                 stopAllGames();
+                document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
             }
         };
 
@@ -757,6 +767,9 @@
             activeGameName = gameName;
             document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.game-screen').forEach(scr => scr.classList.remove('active'));
+            
+            // Poner en gris los controles al cambiar de juego hasta que se haga click en el canvas
+            document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
 
             event.target.classList.add('active');
             document.getElementById(`${gameName}-screen`).classList.add('active');
@@ -850,6 +863,7 @@
 
         sCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = sCanvas; sCanvas.focus(); resetSnakeState();
+            document.getElementById("snake-controls").classList.remove('disabled-controls'); // Activa controles
             snakeInterval = setInterval(runSnake, 110);
         });
 
@@ -960,6 +974,7 @@
 
         tCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = tCanvas; tCanvas.focus(); resetTetrisState();
+            document.getElementById("tetris-controls").classList.remove('disabled-controls'); // Activa controles
             tetrisInterval = setInterval(dropTetris, 350);
         });
 
@@ -1040,6 +1055,7 @@
 
         rCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = rCanvas; rCanvas.focus(); resetRunnerState();
+            document.getElementById("runner-controls").classList.remove('disabled-controls'); // Activa controles
             runnerInterval = setInterval(runRunner, 25);
         });
 
@@ -1135,6 +1151,7 @@
 
         dCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = dCanvas; dCanvas.focus(); resetDodgeState();
+            document.getElementById("dodge-controls").classList.remove('disabled-controls'); // Activa controles
             dodgeInterval = setInterval(runDodge, 25);
         });
 
