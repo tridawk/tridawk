@@ -56,6 +56,19 @@
             cursor: pointer;
         }
 
+        /* Estado expandido a pantalla completa (Maximizado) */
+        #logo-corner.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            box-shadow: none;
+            border: none;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
         .window-titlebar {
             background: var(--cyan-accent);
             color: #000;
@@ -67,6 +80,12 @@
             font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        #logo-corner.expanded .window-titlebar {
+            height: 35px;
+            padding: 0 15px;
+            font-size: 0.9rem;
         }
 
         .window-controls {
@@ -95,6 +114,13 @@
             height: calc(100% - 22px);
             object-fit: cover;
             transition: opacity 0.2s;
+            cursor: zoom-in;
+        }
+
+        #logo-corner.expanded img {
+            height: calc(100vh - 35px);
+            object-fit: contain;
+            cursor: zoom-out;
         }
 
         #logo-corner.minimized img {
@@ -468,14 +494,15 @@
 
     <!-- LOGO-->
     <div id="logo-corner">
-        <div class="window-titlebar" onclick="toggleLogoWindow()">
+        <div class="window-titlebar">
             <span>LOGO.EXE</span>
             <div class="window-controls">
-                <button class="win-btn" onclick="toggleLogoWindow(); event.stopPropagation();">□</button>
-                <button class="win-btn" onclick="toggleLogoWindow(); event.stopPropagation();">_</button>
+                <button class="win-btn" title="Descargar" onclick="downloadLogo(); event.stopPropagation();">⤓</button>
+                <button class="win-btn" title="Maximizar/Restaurar" onclick="toggleMaximizeLogo(); event.stopPropagation();">□</button>
+                <button class="win-btn" title="Minimizar" onclick="minimizeLogoWindow(); event.stopPropagation();">_</button>
             </div>
         </div>
-        <img src="logoBig.png" alt="tridawk Logo" onerror="ALR, SOMETHING IS MISSING">
+        <img id="logo-img" src="logoBig.png" alt="tridawk Logo" onclick="expandLogoWindow()" onerror="this.alt='ALR, SOMETHING IS MISSING'">
     </div>
 
     <!-- Particle Background -->
@@ -681,15 +708,42 @@
     </div>
 
     <script>
-        
+        const logoWin = document.getElementById('logo-corner');
+        const logoImg = document.getElementById('logo-img');
+
         if (window.innerWidth <= 768) {
-            document.getElementById('logo-corner').classList.add('minimized');
+            logoWin.classList.add('minimized');
         }
 
-        // Toggle window logic
-        function toggleLogoWindow() {
-            const logoWin = document.getElementById('logo-corner');
+        // Expandir / Restablecer al hacer clic en la foto
+        function expandLogoWindow() {
+            if (logoWin.classList.contains('minimized')) {
+                logoWin.classList.remove('minimized');
+            } else {
+                logoWin.classList.toggle('expanded');
+            }
+        }
+
+        // Botón Maximizar / Restaurar (□)
+        function toggleMaximizeLogo() {
+            logoWin.classList.remove('minimized');
+            logoWin.classList.toggle('expanded');
+        }
+
+        // Botón Minimizar (_)
+        function minimizeLogoWindow() {
+            logoWin.classList.remove('expanded');
             logoWin.classList.toggle('minimized');
+        }
+
+        // Botón Descargar (⤓)
+        function downloadLogo() {
+            const link = document.createElement('a');
+            link.href = logoImg.src;
+            link.download = 'logoBig.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // starhshssss
@@ -867,7 +921,7 @@
 
         sCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = sCanvas; sCanvas.focus(); resetSnakeState();
-            document.getElementById("snake-controls").classList.remove('disabled-controls'); // Activa controles
+            document.getElementById("snake-controls").classList.remove('disabled-controls');
             snakeInterval = setInterval(runSnake, 110);
         });
 
@@ -978,7 +1032,7 @@
 
         tCanvas.addEventListener("click", () => {
             stopAllGames(); focusedCanvas = tCanvas; tCanvas.focus(); resetTetrisState();
-            document.getElementById("tetris-controls").classList.remove('disabled-controls'); // Activa controles
+            document.getElementById("tetris-controls").classList.remove('disabled-controls');
             tetrisInterval = setInterval(dropTetris, 350);
         });
 
@@ -1161,7 +1215,6 @@
 
         window.addEventListener("keydown", e => { if (focusedCanvas === dCanvas) keys[e.key] = true; });
         window.addEventListener("keyup", e => { if (focusedCanvas === dCanvas) keys[e.key] = false; });
-        // If ur readin this i want u to know that i feel observed vro
     </script>
 </body>
 </html>
