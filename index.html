@@ -945,7 +945,12 @@
             resetSnakeState();
         }
 
-        function spawnFood() { food.x = Math.floor(Math.random()*sTile); food.y = Math.floor(Math.random()*sTile); }
+        function spawnFood() {
+            do {
+                food.x = Math.floor(Math.random() * sTile);
+                food.y = Math.floor(Math.random() * sTile);
+            } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+        }
 
         function runSnake() {
             if (sDx !== 0 || sDy !== 0) {
