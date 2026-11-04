@@ -56,7 +56,7 @@
             cursor: pointer;
         }
 
-        /* Estado expandido a pantalla completa (Maximizado) */
+        /*maximized*/
         #logo-corner.expanded {
             position: fixed;
             top: 0;
@@ -715,7 +715,7 @@
             logoWin.classList.add('minimized');
         }
 
-        // Expandir / Restablecer al hacer clic en la foto
+        // expand de-expand
         function expandLogoWindow() {
             if (logoWin.classList.contains('minimized')) {
                 logoWin.classList.remove('minimized');
@@ -724,19 +724,19 @@
             }
         }
 
-        // Botón Maximizar / Restaurar (□)
+        // restore (□)
         function toggleMaximizeLogo() {
             logoWin.classList.remove('minimized');
             logoWin.classList.toggle('expanded');
         }
 
-        // Botón Minimizar (_)
+        // Bminimize (_)
         function minimizeLogoWindow() {
             logoWin.classList.remove('expanded');
             logoWin.classList.toggle('minimized');
         }
 
-        // Botón Descargar (⤓)
+        // downlod
         function downloadLogo() {
             const link = document.createElement('a');
             link.href = logoImg.src;
