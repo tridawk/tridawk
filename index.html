@@ -510,7 +510,7 @@
             </div>
         </div>
 
-        <img id="logo-img" src="logoBig.png" alt="tridawk Logo" onclick="expandLogoWindow()" onerror="this.alt='ALR, SOMETHING IS MISSING'">
+        <img id="logo-img" src="tridawk.png" alt="tridawk Logo" onclick="expandLogoWindow()" onerror="this.alt='ALR, SOMETHING IS MISSING'">
     </div>
 
     <!-- Particle Background -->
@@ -788,7 +788,7 @@
         function downloadLogo() {
             const link = document.createElement('a');
             link.href = logoImg.src;
-            link.download = 'logoBig.png';
+            link.download = 'tridawk.png';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
