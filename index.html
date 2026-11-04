@@ -32,9 +32,9 @@
             user-select: none;
         }
 
-        /*logo*/
+        /* Ventana del Logo Movible */
         #logo-corner {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             width: 200px;
@@ -42,27 +42,26 @@
             border: 2px solid var(--cyan-accent);
             box-shadow: 0 0 12px var(--cyan-accent);
             overflow: hidden;
-            z-index: 10;
+            z-index: 100;
             background: #000;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
         }
 
+        /* Minimizado */
         #logo-corner.minimized {
-            height: 30px;
-            width: 70px;
+            height: 30px !important;
+            width: 110px !important;
             box-shadow: 0 0 6px var(--cyan-accent);
-            cursor: pointer;
         }
 
-        /*maximized*/
+        /* Maximizado (Pantalla completa) */
         #logo-corner.expanded {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
             z-index: 1000;
             box-shadow: none;
             border: none;
@@ -79,13 +78,14 @@
             padding: 0 6px;
             font-size: 0.75rem;
             font-weight: bold;
-            cursor: pointer;
+            cursor: move; /* Indica que la barra sirve para arrastrar */
         }
 
         #logo-corner.expanded .window-titlebar {
             height: 35px;
             padding: 0 15px;
             font-size: 0.9rem;
+            cursor: default;
         }
 
         .window-controls {
@@ -107,6 +107,15 @@
 
         .win-btn:hover {
             color: var(--pink-accent);
+        }
+
+        /* El botón de descarga solo es visible cuando la ventana está maximizada */
+        .btn-download {
+            display: none;
+        }
+
+        #logo-corner.expanded .btn-download {
+            display: inline-block;
         }
 
         #logo-corner img {
@@ -492,16 +501,20 @@
 </head>
 <body>
 
-    <!-- LOGO-->
+    <!-- LOGO (VENTANA INTERACTIVA) -->
     <div id="logo-corner">
-        <div class="window-titlebar">
+        <div class="window-titlebar" id="logo-titlebar">
             <span>LOGO.EXE</span>
             <div class="window-controls">
-                <button class="win-btn" title="Descargar" onclick="downloadLogo(); event.stopPropagation();">⤓</button>
-                <button class="win-btn" title="Maximizar/Restaurar" onclick="toggleMaximizeLogo(); event.stopPropagation();">□</button>
-                <button class="win-btn" title="Minimizar" onclick="minimizeLogoWindow(); event.stopPropagation();">_</button>
+                <!-- Botón descargar (solo visible en maximizado) -->
+                <button class="win-btn btn-download" title="Descargar" onclick="downloadLogo(); event.stopPropagation();">⤓</button>
+                <!-- Maximizar/Restaurar -->
+                <button class="win-btn" title="Maximizar" onclick="toggleMaximizeLogo(); event.stopPropagation();">□</button>
+                <!-- Minimizar/Restaurar -->
+                <button class="win-btn" title="Minimizar" onclick="toggleMinimizeLogo(); event.stopPropagation();">_</button>
             </div>
         </div>
+        <!-- Clic en la foto expande a pantalla completa -->
         <img id="logo-img" src="logoBig.png" alt="tridawk Logo" onclick="expandLogoWindow()" onerror="this.alt='ALR, SOMETHING IS MISSING'">
     </div>
 
@@ -710,12 +723,13 @@
     <script>
         const logoWin = document.getElementById('logo-corner');
         const logoImg = document.getElementById('logo-img');
+        const logoTitlebar = document.getElementById('logo-titlebar');
 
         if (window.innerWidth <= 768) {
             logoWin.classList.add('minimized');
         }
 
-        // expand de-expand FIXED FINALYY
+        /* 1. Clic en la FOTO -> Maximizar/Restaurar a pantalla completa */
         function expandLogoWindow() {
             if (logoWin.classList.contains('minimized')) {
                 logoWin.classList.remove('minimized');
@@ -724,19 +738,61 @@
             }
         }
 
-        // restore (□)
+        /* 2. Botón □ -> Maximizar / Restaurar */
         function toggleMaximizeLogo() {
             logoWin.classList.remove('minimized');
             logoWin.classList.toggle('expanded');
         }
 
-        // Bminimize (_)
-        function minimizeLogoWindow() {
+        /* 3. Botón _ -> Minimizar / Restaurar */
+        function toggleMinimizeLogo() {
             logoWin.classList.remove('expanded');
             logoWin.classList.toggle('minimized');
         }
 
-        // downlod
+        /* 4. Clic en la BARRA DE TÍTULO -> Funciona como Switch Minimizar / Restaurar */
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        let hasMoved = false;
+
+        logoTitlebar.addEventListener('click', (e) => {
+            // Si hemos arrastrado la ventana, no activamos el switch al soltar
+            if (hasMoved) return;
+            // Alternar minimizado
+            toggleMinimizeLogo();
+        });
+
+        /* 5. Lógica para ARRASTRAR / MOVER la ventana */
+        logoTitlebar.addEventListener('mousedown', (e) => {
+            // No arrastrar si hace clic directamente en un botón o si está maximizado
+            if (e.target.tagName === 'BUTTON' || logoWin.classList.contains('expanded')) return;
+            
+            isDragging = true;
+            hasMoved = false;
+            dragOffset.x = e.clientX - logoWin.offsetLeft;
+            dragOffset.y = e.clientY - logoWin.offsetTop;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            hasMoved = true;
+            let left = e.clientX - dragOffset.x;
+            let top = e.clientY - dragOffset.y;
+
+            // Límites de pantalla opcionales
+            left = Math.max(0, Math.min(window.innerWidth - logoWin.offsetWidth, left));
+            top = Math.max(0, Math.min(window.innerHeight - logoWin.offsetHeight, top));
+
+            logoWin.style.left = left + 'px';
+            logoWin.style.top = top + 'px';
+            logoWin.style.right = 'auto'; // Elimina 'right' para permitir 'left' dinámico
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        /* 6. Botón Descargar (⤓) */
         function downloadLogo() {
             const link = document.createElement('a');
             link.href = logoImg.src;
@@ -746,7 +802,7 @@
             document.body.removeChild(link);
         }
 
-        // starhshssss
+        // Particle background
         const bgCanvas = document.getElementById('bgCanvas');
         const bgCtx = bgCanvas.getContext('2d');
         let particles = [];
@@ -786,7 +842,7 @@
         }
         animateBg();
 
-        //modal faq and logic
+        // Modal faq & games logic
         let focusedCanvas = null;
         let activeGameName = 'snake';
 
@@ -797,7 +853,6 @@
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             stopAllGames();
-
             document.querySelectorAll('.mobile-controls').forEach(ctrl => ctrl.classList.add('disabled-controls'));
         }
 
