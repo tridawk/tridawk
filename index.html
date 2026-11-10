@@ -554,8 +554,8 @@
             </div>
 
             <!-- Each game lives in games/<name>.html -->
-            <iframe id="gameFrame" src="about:blank"
-                    style="width:100%; height:470px; border:none; background:transparent;"></iframe>
+            <iframe id="gameFrame" src="about:blank" scrolling="no" onload="fitGameFrame()"
+                    style="width:100%; height:470px; border:none; background:transparent; display:block;"></iframe>
         </div>
     </div>
 
@@ -681,6 +681,17 @@
         // Modal faq & games logic
         const gameFrame = document.getElementById('gameFrame');
         const gameHeights = { snake: 470, tetris: 650, runner: 500, dodge: 640 };
+
+        // Ajusta el marco a la altura real del juego (si el navegador lo permite)
+        function fitGameFrame() {
+            try {
+                const doc = gameFrame.contentDocument;
+                if (!doc || !doc.body || gameFrame.src.endsWith('about:blank')) return;
+                gameFrame.style.height = (doc.body.offsetHeight + 4) + 'px';
+            } catch (e) {
+                // si no se puede medir, se queda con la altura de gameHeights
+            }
+        }
 
         function loadGame(name) {
             gameFrame.style.height = gameHeights[name] + 'px';
