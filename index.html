@@ -1224,7 +1224,7 @@ const tCanvas = document.getElementById("tetrisCanvas");
         window.addEventListener("keydown", e => { if (focusedCanvas === rCanvas) handleInput(e.key); });
 
 // dodgin
-        const dCanvas = document.getElementById("dodgeCanvas");
+const dCanvas = document.getElementById("dodgeCanvas");
         const dCtx = dCanvas.getContext("2d");
         
         dCanvas.width = 400;
@@ -1243,7 +1243,7 @@ const tCanvas = document.getElementById("tetrisCanvas");
         let lastHomingTime = 0;
         let lastWallDirection = -1;
         let lastWallSpawnTime = 0;
-        let wallPhaseDelay = 0; 
+        let phaseDelay = 0; 
 
         let isDead = false;
         let fatalBullet = null;
@@ -1254,10 +1254,10 @@ const tCanvas = document.getElementById("tetrisCanvas");
             dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - dPlayer.size / 2;
             dBullets = [];
             dodgeTime = 0;
-            lastBlasterTime = 0;
-            lastHomingTime = 0;
+            lastBlasterTime = Date.now() - 6000; 
+            lastHomingTime = Date.now();
             lastWallSpawnTime = 0;
-            wallPhaseDelay = 0;
+            phaseDelay = 0; 
             currentPhase = 1;
             phaseTimer = 0;
             fadeAlpha = 0;
@@ -1287,6 +1287,11 @@ const tCanvas = document.getElementById("tetrisCanvas");
 
         function spawnSansPattern() {
             let now = Date.now();
+
+            if (phaseDelay > 0) {
+                phaseDelay--;
+                return;
+            }
 
             if (currentPhase === 1) {
                 let canSpawnBlaster = (now - lastBlasterTime) >= 8000;
@@ -1358,11 +1363,6 @@ const tCanvas = document.getElementById("tetrisCanvas");
                 }
             }
             else if (currentPhase === 3) {
-                if (wallPhaseDelay > 0) {
-                    wallPhaseDelay--;
-                    return;
-                }
-
                 let canSpawnNewWall = true;
                 for (let b of dBullets) {
                     if (b.type === "thin_wall") {
@@ -1442,8 +1442,10 @@ const tCanvas = document.getElementById("tetrisCanvas");
                 dPlayer.x = dodgeBox.x + dodgeBox.size / 2 - dPlayer.size / 2;
                 dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - dPlayer.size / 2;
                 
-                if (currentPhase === 3) {
-                    wallPhaseDelay = 40; 
+                if (currentPhase !== 1) {
+                    phaseDelay = 80; 
+                } else {
+                    phaseDelay = 0;
                 }
                 
                 nextPhaseSwitchTime = (currentPhase === 1) ? (30 + Math.random() * 15) : (15 + Math.random() * 5);
