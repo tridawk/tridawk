@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sneik</title>
+<link rel="stylesheet" href="games.css">
+</head>
+<body>
+    <div class="score-board">
+        <span>SCORE: <span id="snakeScore">0</span></span>
+        <span style="color:var(--cyan-accent)">BEST: <span id="snakeBest">0</span></span>
+    </div>
+    <canvas id="snakeCanvas" class="game-canvas" width="240" height="240" tabindex="0"></canvas>
+    <div class="game-hint">Click to play<br>[ with Arrows ]</div>
+
+    <div id="snake-controls" class="mobile-controls disabled-controls">
+        <div class="touch-row"><div class="touch-btn" onclick="handleInput('ArrowUp')">▲</div></div>
+        <div class="touch-row">
+            <div class="touch-btn" onclick="handleInput('ArrowLeft')">◄</div>
+            <div class="touch-btn" onclick="handleInput('ArrowDown')">▼</div>
+            <div class="touch-btn" onclick="handleInput('ArrowRight')">►</div>
+        </div>
+    </div>
+
+<script>
+const sCanvas = document.getElementById("snakeCanvas");
+const sCtx = sCanvas.getContext("2d");
+const sGrid = 20, sTile = sCanvas.width / sGrid;
+let snake = [{x: 5, y: 5}], food = {x: 2, y: 2}, sDx = 0, sDy = 0;
+let snakeInterval = null, snakeScore = 0, snakeBest = 0, playing = false;
+
+function handleInput(keyName) {
+    if (keyName === "ArrowUp" && sDy === 0) { sDx = 0; sDy = -1; }
+    if (keyName === "ArrowDown" && sDy === 0) { sDx = 0; sDy = 1; }
+    if (keyName === "ArrowLeft" && sDx === 0) { sDx = -1; sDy = 0; }
+    if (keyName === "ArrowRight" && sDx === 0) { sDx = 1; sDy = 0; }
+}
+
+function drawSnake() {
+    sCtx.fillStyle = "#000"; sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+    sCtx.fillStyle = "#ff2a5f"; sCtx.fillRect(food.x * sGrid, food.y * sGrid, sGrid - 2, sGrid - 2);
+    sCtx.fillStyle = "#00f0ff"; snake.forEach(p => sCtx.fillRect(p.x * sGrid, p.y * sGrid, sGrid - 2, sGrid - 2));
+}
+
+function spawnFood() {
+    do {
+        food.x = Math.floor(Math.random() * sTile);
+        food.y = Math.floor(Math.random() * sTile);
+    } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+}
+
+function resetSnakeState() {
+    snake = [{x: 5, y: 5}]; sDx = 0; sDy = 0; snakeScore = 0;
+    document.getElementById("snakeScore").innerText = 0;
+    spawnFood();
+    drawSnake();
+}
+
+function resetSnake() {
+    if (snakeScore > snakeBest) { snakeBest = snakeScore; document.getElementById("snakeBest").innerText = snakeBest; }
+    resetSnakeState();
+}
+
+function runSnake() {
+    if (sDx !== 0 || sDy !== 0) {
+        const head = {x: snake[0].x + sDx, y: snake[0].y + sDy};
+        if (head.x < 0 || head.x >= sTile || head.y < 0 || head.y >= sTile || snake.some(p => p.x === head.x && p.y === head.y)) {
+            resetSnake(); return;
+        }
+        snake.unshift(head);
+        if (head.x === food.x && head.y === food.y) {
+            snakeScore += 1;
+            document.getElementById("snakeScore").innerText = snakeScore;
+            spawnFood();
+        } else {
+            snake.pop();
+        }
+    }
+    drawSnake();
+}
+
+sCanvas.addEventListener("click", () => {
+    clearInterval(snakeInterval);
+    playing = true;
+    sCanvas.focus();
+    resetSnakeState();
+    document.getElementById("snake-controls").classList.remove('disabled-controls');
+    snakeInterval = setInterval(runSnake, 110);
+});
+
+window.addEventListener("keydown", e => {
+    if (!playing) return;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) e.preventDefault();
+    handleInput(e.key);
+});
+
+resetSnakeState();
+</script>
+</body>
+</html>

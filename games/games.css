@@ -1,0 +1,99 @@
+:root {
+    --text-color: #dcdce6;
+    --pink-accent: #ff2a5f;
+    --cyan-accent: #00f0ff;
+    --border-color: #1a1a2e;
+}
+
+html, body {
+    background: transparent;
+}
+
+body {
+    color: var(--text-color);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 6px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    user-select: none;
+}
+
+.score-board {
+    font-size: 0.8rem;
+    color: var(--pink-accent);
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+canvas.game-canvas {
+    border: 2px solid var(--pink-accent);
+    background: #000;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 0 12px rgba(255, 42, 95, 0.2);
+    touch-action: none;
+    max-width: 100%;
+}
+
+.game-hint {
+    font-size: 0.7rem;
+    color: var(--cyan-accent);
+    margin-top: 8px;
+    letter-spacing: 1px;
+    display: block;
+}
+
+.mobile-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    width: 100%;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-controls.disabled-controls {
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .mobile-controls {
+        display: none !important;
+    }
+}
+
+.touch-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.touch-btn {
+    background: rgba(15, 15, 25, 0.8);
+    color: var(--cyan-accent);
+    border: 1px solid var(--cyan-accent);
+    width: 44px;
+    height: 44px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.touch-btn:active {
+    background: var(--cyan-accent);
+    color: #000;
+}

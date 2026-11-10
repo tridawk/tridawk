@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runner</title>
+<link rel="stylesheet" href="games.css">
+</head>
+<body>
+    <div class="score-board">
+        <span>DIST: <span id="runnerScore">0</span>m</span>
+        <span style="color:var(--cyan-accent)">BEST: <span id="runnerBest">0</span>m</span>
+    </div>
+    <canvas id="runnerCanvas" class="game-canvas" width="220" height="260" tabindex="0"></canvas>
+    <div class="game-hint">Click to play with <br>[ Left / Right Arrows to switch lanes ]</div>
+
+    <div id="runner-controls" class="mobile-controls disabled-controls">
+        <div class="touch-row">
+            <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowLeft')">◄ LEFT</div>
+            <div class="touch-btn" style="width: 80px;" onclick="handleInput('ArrowRight')">RIGHT ►</div>
+        </div>
+    </div>
+
+<script>
+const rCanvas = document.getElementById("runnerCanvas");
+const rCtx = rCanvas.getContext("2d");
+const lanes = [45, 102, 159];
+let targetLane = 1, playerX = lanes[1];
+let runnerObstacles = [], runnerInterval = null, runnerScore = 0, runnerBest = 0, lastSpawnY = -150, playing = false;
+
+function handleInput(keyName) {
+    if (keyName === "ArrowLeft" && targetLane > 0) targetLane--;
+    if (keyName === "ArrowRight" && targetLane < 2) targetLane++;
+}
+
+function drawLanes() {
+    rCtx.fillStyle = "#000"; rCtx.fillRect(0, 0, rCanvas.width, rCanvas.height);
+    rCtx.strokeStyle = "#1a1a2e";
+    rCtx.lineWidth = 2;
+    rCtx.beginPath();
+    rCtx.moveTo(76, 0); rCtx.lineTo(76, 260);
+    rCtx.moveTo(144, 0); rCtx.lineTo(144, 260);
+    rCtx.stroke();
+}
+
+function resetRunnerState() {
+    targetLane = 1;
+    playerX = lanes[1];
+    runnerObstacles = [];
+    runnerScore = 0;
+    lastSpawnY = -150;
+    document.getElementById("runnerScore").innerText = 0;
+    drawLanes();
+    rCtx.fillStyle = "#00f0ff"; rCtx.fillRect(playerX, 210, 16, 20);
+}
+
+function resetRunner() {
+    if (runnerScore > runnerBest) { runnerBest = runnerScore; document.getElementById("runnerBest").innerText = runnerBest; }
+    resetRunnerState();
+}
+
+function runRunner() {
+    runnerScore += 1;
+    document.getElementById("runnerScore").innerText = runnerScore;
+
+    let currentSpeed = 3.5 + Math.min(3.5, Math.floor(runnerScore / 250) * 0.5);
+    let minGap = 90;
+
+    lastSpawnY += currentSpeed;
+    if (lastSpawnY > minGap) {
+        let availableLanes = [0, 1, 2];
+        let countToSpawn = Math.random() < 0.4 ? 2 : 1;
+        for (let i = 0; i < countToSpawn; i++) {
+            let randIndex = Math.floor(Math.random() * availableLanes.length);
+            let chosenLane = availableLanes.splice(randIndex, 1)[0];
+            runnerObstacles.push({ lane: chosenLane, y: -30 });
+        }
+        lastSpawnY = 0;
+    }
+
+    let targetX = lanes[targetLane];
+    playerX += (targetX - playerX) * 0.35;
+
+    drawLanes();
+
+    runnerObstacles.forEach((obs, index) => {
+        obs.y += currentSpeed;
+        rCtx.fillStyle = "#ff2a5f";
+        rCtx.fillRect(lanes[obs.lane], obs.y, 16, 22);
+
+        let obsCenterX = lanes[obs.lane] + 8;
+        let playerCenterX = playerX + 8;
+        if (obs.y > 195 && obs.y < 232 && Math.abs(playerCenterX - obsCenterX) < 10) {
+            resetRunner();
+        }
+
+        if (obs.y > 280) runnerObstacles.splice(index, 1);
+    });
+
+    rCtx.fillStyle = "#00f0ff";
+    rCtx.fillRect(playerX, 210, 16, 20);
+}
+
+rCanvas.addEventListener("click", () => {
+    clearInterval(runnerInterval);
+    playing = true;
+    rCanvas.focus();
+    resetRunnerState();
+    document.getElementById("runner-controls").classList.remove('disabled-controls');
+    runnerInterval = setInterval(runRunner, 25);
+});
+
+window.addEventListener("keydown", e => {
+    if (!playing) return;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) e.preventDefault();
+    handleInput(e.key);
+});
+
+resetRunnerState();
+</script>
+</body>
+</html>

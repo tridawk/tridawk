@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dodge</title>
+<link rel="stylesheet" href="games.css">
+</head>
+<body>
+    <div class="score-board">
+        <span>TIME: <span id="dodgeScore">0.0</span>s</span>
+        <span style="color:var(--cyan-accent)">BEST: <span id="dodgeBest">0.0</span>s</span>
+    </div>
+    <canvas id="dodgeCanvas" class="game-canvas" width="400" height="400" tabindex="0"></canvas>
+    <div class="game-hint">Click to play with <br>[ Arrow keys to move square inside box ]</div>
+
+    <div id="dodge-controls" class="mobile-controls disabled-controls">
+        <div class="touch-row"><div class="touch-btn" ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false">▲</div></div>
+        <div class="touch-row">
+            <div class="touch-btn" ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false">◄</div>
+            <div class="touch-btn" ontouchstart="keys['ArrowDown']=true" ontouchend="keys['ArrowDown']=false">▼</div>
+            <div class="touch-btn" ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false">►</div>
+        </div>
+    </div>
+
+<script>
+const dCanvas = document.getElementById("dodgeCanvas");
+const dCtx = dCanvas.getContext("2d");
+
+let dodgeBox = { x: 74, y: 74, size: 252 };
+let dPlayer = { x: 200, y: 200, size: 10, speed: 2.2 };
+let dBullets = [];
+let dodgeInterval = null, dodgeTime = 0, dodgeBest = 0, keys = {}, playing = false;
+let lastBlasterTime = 0;
+
+let currentPhase = 1;
+let phaseTimer = 0;
+let nextPhaseSwitchTime = 30 + Math.random() * 15;
+let fadeAlpha = 0;
+
+let lastHomingTime = 0;
+let lastWallDirection = -1;
+let lastWallSpawnTime = 0;
+let phaseDelay = 0;
+
+let isDead = false;
+let fatalBullet = null;
+let deathFlashTimer = 0;
+
+function resetDodgeState() {
+    dPlayer.x = dodgeBox.x + dodgeBox.size / 2 - dPlayer.size / 2;
+    dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - dPlayer.size / 2;
+    dBullets = [];
+    dodgeTime = 0;
+    lastBlasterTime = Date.now() - 6000;
+    lastHomingTime = Date.now();
+    lastWallSpawnTime = 0;
+    phaseDelay = 0;
+    currentPhase = 1;
+    phaseTimer = 0;
+    fadeAlpha = 0;
+    isDead = false;
+    fatalBullet = null;
+    nextPhaseSwitchTime = 30 + Math.random() * 15;
+    document.getElementById("dodgeScore").innerText = "0.0";
+
+    dCtx.fillStyle = "#000"; dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+    dCtx.strokeStyle = "#00f0ff"; dCtx.lineWidth = 2; dCtx.strokeRect(dodgeBox.x, dodgeBox.y, dodgeBox.size, dodgeBox.size);
+    dCtx.fillStyle = "#00f0ff"; dCtx.fillRect(dPlayer.x, dPlayer.y, dPlayer.size, dPlayer.size);
+}
+
+function triggerDeath(bullet) {
+    if (isDead) return;
+    isDead = true;
+    fatalBullet = bullet;
+
+    if (dodgeTime > dodgeBest) {
+        dodgeBest = dodgeTime;
+        document.getElementById("dodgeBest").innerText = dodgeBest.toFixed(1);
+    }
+
+    document.getElementById("dodgeScore").innerText = dodgeTime.toFixed(1);
+    deathFlashTimer = 40;
+}
+
+function spawnSansPattern() {
+    let now = Date.now();
+
+    if (phaseDelay > 0) {
+        phaseDelay--;
+        return;
+    }
+
+    if (currentPhase === 1) {
+        let canSpawnBlaster = (now - lastBlasterTime) >= 8000;
+        let canSpawnHoming = (now - lastHomingTime) >= 5000;
+
+        if (canSpawnHoming) {
+            lastHomingTime = now;
+            let startSide = Math.floor(Math.random() * 4);
+            let bx = 0, by = 0;
+            let spawnDist = 70;
+
+            if (startSide === 0) { bx = dodgeBox.x + Math.random() * dodgeBox.size; by = dodgeBox.y - spawnDist; }
+            else if (startSide === 1) { bx = dodgeBox.x + Math.random() * dodgeBox.size; by = dodgeBox.y + dodgeBox.size + spawnDist; }
+            else if (startSide === 2) { bx = dodgeBox.x - spawnDist; by = dodgeBox.y + Math.random() * dodgeBox.size; }
+            else { bx = dodgeBox.x + dodgeBox.size + spawnDist; by = dodgeBox.y + Math.random() * dodgeBox.size; }
+
+            let targetX = dPlayer.x + dPlayer.size / 2;
+            let targetY = dPlayer.y + dPlayer.size / 2;
+            let angle = Math.atan2(targetY - by, targetX - bx);
+            let homingSpeed = 2.0;
+
+            dBullets.push({
+                type: "homing",
+                x: bx, y: by,
+                vx: Math.cos(angle) * homingSpeed,
+                vy: Math.sin(angle) * homingSpeed,
+                w: 8, h: 8
+            });
+        }
+
+        if (Math.random() < 0.12 && canSpawnBlaster) {
+            lastBlasterTime = now;
+            let isVertical = Math.random() > 0.5;
+            dBullets.push({
+                type: "blaster",
+                timer: 0, chargeTime: 30, duration: 10,
+                isVertical: isVertical,
+                x: isVertical ? dPlayer.x - 4 : dodgeBox.x,
+                y: isVertical ? dodgeBox.y : dPlayer.y - 4,
+                w: isVertical ? 20 : dodgeBox.size,
+                h: isVertical ? dodgeBox.size : 20
+            });
+        }
+        else if (Math.random() < 0.08) {
+            let side = Math.floor(Math.random() * 4);
+            let b = { type: "bone", x: 0, y: 0, vx: 0, vy: 0, w: 6, h: 20 };
+            let speed = 1.8 + Math.random() * 0.8;
+            let spawnDistance = 60;
+
+            if (side === 0) { b.x = dodgeBox.x + Math.random() * (dodgeBox.size - 6); b.y = dodgeBox.y - spawnDistance; b.vy = speed; }
+            else if (side === 1) { b.x = dodgeBox.x + Math.random() * (dodgeBox.size - 6); b.y = dodgeBox.y + dodgeBox.size + spawnDistance; b.vy = -speed; }
+            else if (side === 2) { b.w = 20; b.h = 6; b.x = dodgeBox.x - spawnDistance; b.y = dodgeBox.y + Math.random() * (dodgeBox.size - 6); b.vx = speed; }
+            else { b.w = 20; b.h = 6; b.x = dodgeBox.x + dodgeBox.size + spawnDistance; b.y = dodgeBox.y + Math.random() * (dodgeBox.size - 6); b.vx = -speed; }
+            dBullets.push(b);
+        }
+    }
+    else if (currentPhase === 2) {
+        if (Math.random() < 0.045) {
+            let isVertical = Math.random() > 0.5;
+            dBullets.push({
+                type: "aimed_laser",
+                timer: 0, chargeTime: 22, duration: 8,
+                isVertical: isVertical,
+                x: isVertical ? dPlayer.x + dPlayer.size / 2 - 6 : dodgeBox.x,
+                y: isVertical ? dodgeBox.y : dPlayer.y + dPlayer.size / 2 - 6,
+                w: isVertical ? 12 : dodgeBox.size,
+                h: isVertical ? dodgeBox.size : 12
+            });
+        }
+    }
+    else if (currentPhase === 3) {
+        let canSpawnNewWall = true;
+        for (let b of dBullets) {
+            if (b.type === "thin_wall") {
+                if (b.dir === 0 && b.y < dodgeBox.y + dodgeBox.size * 0.75) canSpawnNewWall = false;
+                if (b.dir === 1 && b.y > dodgeBox.y + dodgeBox.size * 0.25) canSpawnNewWall = false;
+                if (b.dir === 2 && b.x < dodgeBox.x + dodgeBox.size * 0.75) canSpawnNewWall = false;
+                if (b.dir === 3 && b.x > dodgeBox.x + dodgeBox.size * 0.25) canSpawnNewWall = false;
+            }
+        }
+
+        if (canSpawnNewWall && (now - lastWallSpawnTime) >= 180) {
+            lastWallSpawnTime = now;
+            let dir;
+            do {
+                dir = Math.floor(Math.random() * 4);
+            } while (dir === lastWallDirection);
+            lastWallDirection = dir;
+
+            let barThickness = 8;
+            let minGap = 35;
+            let maxGap = 60;
+            let gapSize = minGap + Math.random() * (maxGap - minGap);
+            let speed = 2.94;
+
+            if (dir === 0 || dir === 1) {
+                let gapPos = dodgeBox.x + 10 + Math.random() * (dodgeBox.size - gapSize - 20);
+                let isTop = (dir === 0);
+
+                dBullets.push({ type: "thin_wall", dir: isTop ? 0 : 1, x: dodgeBox.x, y: isTop ? dodgeBox.y - 30 : dodgeBox.y + dodgeBox.size + 10, w: gapPos - dodgeBox.x, h: barThickness, vx: 0, vy: isTop ? speed : -speed });
+                dBullets.push({ type: "thin_wall", dir: isTop ? 0 : 1, x: gapPos + gapSize, y: isTop ? dodgeBox.y - 30 : dodgeBox.y + dodgeBox.size + 10, w: (dodgeBox.x + dodgeBox.size) - (gapPos + gapSize), h: barThickness, vx: 0, vy: isTop ? speed : -speed });
+            } else {
+                let gapPos = dodgeBox.y + 10 + Math.random() * (dodgeBox.size - gapSize - 20);
+                let isLeft = (dir === 2);
+
+                dBullets.push({ type: "thin_wall", dir: isLeft ? 2 : 3, x: isLeft ? dodgeBox.x - 30 : dodgeBox.x + dodgeBox.size + 10, y: dodgeBox.y, w: barThickness, h: gapPos - dodgeBox.y, vx: isLeft ? speed : -speed, vy: 0 });
+                dBullets.push({ type: "thin_wall", dir: isLeft ? 2 : 3, x: isLeft ? dodgeBox.x - 30 : dodgeBox.x + dodgeBox.size + 10, y: gapPos + gapSize, w: barThickness, h: (dodgeBox.y + dodgeBox.size) - (gapPos + gapSize), vx: isLeft ? speed : -speed, vy: 0 });
+            }
+        }
+    }
+}
+
+function runDodge() {
+    if (isDead) {
+        deathFlashTimer--;
+        dCtx.fillStyle = "#000";
+        dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+
+        dCtx.strokeStyle = "#00f0ff"; dCtx.lineWidth = 2; dCtx.strokeRect(dodgeBox.x, dodgeBox.y, dodgeBox.size, dodgeBox.size);
+        dCtx.fillStyle = "#00f0ff"; dCtx.fillRect(dPlayer.x, dPlayer.y, dPlayer.size, dPlayer.size);
+
+        if (fatalBullet && (deathFlashTimer % 4 < 2)) {
+            dCtx.fillStyle = "#ffffff";
+            dCtx.fillRect(fatalBullet.x, fatalBullet.y, fatalBullet.w, fatalBullet.h);
+        }
+
+        if (deathFlashTimer <= 0) {
+            resetDodgeState();
+        }
+        return;
+    }
+
+    dodgeTime += 0.03;
+    phaseTimer += 0.03;
+
+    document.getElementById("dodgeScore").innerText = dodgeTime.toFixed(1);
+
+    if (phaseTimer >= nextPhaseSwitchTime) {
+        fadeAlpha = 1.0;
+        let nextPhase;
+        do {
+            nextPhase = Math.floor(Math.random() * 3) + 1;
+        } while (nextPhase === currentPhase);
+
+        currentPhase = nextPhase;
+        phaseTimer = 0;
+
+        dPlayer.x = dodgeBox.x + dodgeBox.size / 2 - dPlayer.size / 2;
+        dPlayer.y = dodgeBox.y + dodgeBox.size / 2 - dPlayer.size / 2;
+
+        if (currentPhase !== 1) {
+            phaseDelay = 80;
+        } else {
+            phaseDelay = 0;
+        }
+
+        nextPhaseSwitchTime = (currentPhase === 1) ? (30 + Math.random() * 15) : (15 + Math.random() * 5);
+        dBullets = [];
+    }
+
+    if (fadeAlpha > 0) fadeAlpha -= 0.03;
+
+    spawnSansPattern();
+
+    if (keys["ArrowLeft"]) dPlayer.x -= dPlayer.speed;
+    if (keys["ArrowRight"]) dPlayer.x += dPlayer.speed;
+    if (keys["ArrowUp"]) dPlayer.y -= dPlayer.speed;
+    if (keys["ArrowDown"]) dPlayer.y += dPlayer.speed;
+
+    if (dPlayer.x < dodgeBox.x) dPlayer.x = dodgeBox.x;
+    if (dPlayer.x > dodgeBox.x + dodgeBox.size - dPlayer.size) dPlayer.x = dodgeBox.x + dodgeBox.size - dPlayer.size;
+    if (dPlayer.y < dodgeBox.y) dPlayer.y = dodgeBox.y;
+    if (dPlayer.y > dodgeBox.y + dodgeBox.size - dPlayer.size) dPlayer.y = dodgeBox.y + dodgeBox.size - dPlayer.size;
+
+    dCtx.fillStyle = "#000"; dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+
+    dCtx.strokeStyle = "#00f0ff";
+    dCtx.lineWidth = 2;
+    dCtx.strokeRect(dodgeBox.x, dodgeBox.y, dodgeBox.size, dodgeBox.size);
+
+    for (let i = dBullets.length - 1; i >= 0; i--) {
+        let bul = dBullets[i];
+
+        if (bul.type === "bone" || bul.type === "homing" || bul.type === "thin_wall") {
+            bul.x += (bul.vx || 0);
+            bul.y += (bul.vy || 0);
+
+            dCtx.fillStyle = "#ff2a5f";
+            dCtx.fillRect(bul.x, bul.y, bul.w, bul.h);
+
+            if (
+                dPlayer.x < bul.x + bul.w &&
+                dPlayer.x + dPlayer.size > bul.x &&
+                dPlayer.y < bul.y + bul.h &&
+                dPlayer.y + dPlayer.size > bul.y
+            ) {
+                triggerDeath(bul);
+                return;
+            }
+
+            if (bul.x < -120 || bul.x > dCanvas.width + 120 || bul.y < -120 || bul.y > dCanvas.height + 120) {
+                dBullets.splice(i, 1);
+            }
+        }
+        else if (bul.type === "blaster" || bul.type === "aimed_laser") {
+            bul.timer++;
+
+            if (bul.timer < bul.chargeTime) {
+                dCtx.strokeStyle = (bul.timer % 4 < 2) ? "rgba(255, 42, 95, 0.8)" : "rgba(255, 42, 95, 0.2)";
+                dCtx.lineWidth = 1;
+                dCtx.strokeRect(bul.x, bul.y, bul.w, bul.h);
+            } else if (bul.timer < bul.chargeTime + bul.duration) {
+                dCtx.fillStyle = "#ff2a5f";
+                dCtx.fillRect(bul.x, bul.y, bul.w, bul.h);
+
+                if (
+                    dPlayer.x < bul.x + bul.w &&
+                    dPlayer.x + dPlayer.size > bul.x &&
+                    dPlayer.y < bul.y + bul.h &&
+                    dPlayer.y + dPlayer.size > bul.y
+                ) {
+                    triggerDeath(bul);
+                    return;
+                }
+            } else {
+                dBullets.splice(i, 1);
+            }
+        }
+    }
+
+    dCtx.fillStyle = "#00f0ff";
+    dCtx.fillRect(dPlayer.x, dPlayer.y, dPlayer.size, dPlayer.size);
+
+    if (fadeAlpha > 0) {
+        dCtx.fillStyle = `rgba(0, 240, 255, ${fadeAlpha * 0.4})`;
+        dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
+    }
+}
+
+dCanvas.addEventListener("click", () => {
+    clearInterval(dodgeInterval);
+    playing = true;
+    dCanvas.focus();
+    resetDodgeState();
+    document.getElementById("dodge-controls").classList.remove('disabled-controls');
+    dodgeInterval = setInterval(runDodge, 25);
+});
+
+window.addEventListener("keydown", e => {
+    if (!playing) return;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) e.preventDefault();
+    keys[e.key] = true;
+});
+window.addEventListener("keyup", e => { keys[e.key] = false; });
+
+resetDodgeState();
+</script>
+</body>
+</html>
