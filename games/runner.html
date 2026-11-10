@@ -11,7 +11,7 @@
         <span>DIST: <span id="runnerScore">0</span>m</span>
         <span style="color:var(--cyan-accent)">BEST: <span id="runnerBest">0</span>m</span>
     </div>
-    <canvas id="runnerCanvas" class="game-canvas" width="220" height="260" tabindex="0"></canvas>
+    <canvas id="runnerCanvas" class="game-canvas" width="220" height="390" tabindex="0"></canvas>
     <div class="game-hint">Click to play with <br>[ Left / Right Arrows to switch lanes ]</div>
 
     <div id="runner-controls" class="mobile-controls disabled-controls">
@@ -26,45 +26,103 @@ const rCanvas = document.getElementById("runnerCanvas");
 const rCtx = rCanvas.getContext("2d");
 const lanes = [45, 102, 159];
 let targetLane = 1, playerX = lanes[1];
-let runnerObstacles = [], runnerInterval = null, runnerScore = 0, runnerBest = 0, lastSpawnY = -150, playing = false;
+let runnerObstacles = [], runnerInterval = null, runnerScore = 0, runnerBest = 0, lastSpawnY = -150, playing = false, isDead = false;
+let inputQueue = [];
 
 function handleInput(keyName) {
-    if (keyName === "ArrowLeft" && targetLane > 0) targetLane--;
-    if (keyName === "ArrowRight" && targetLane < 2) targetLane++;
+    if (isDead) return;
+    if (inputQueue.length < 2) {
+        inputQueue.push(keyName);
+    }
 }
 
-function drawLanes() {
-    rCtx.fillStyle = "#000"; rCtx.fillRect(0, 0, rCanvas.width, rCanvas.height);
-    rCtx.strokeStyle = "#1a1a2e";
+function processInput() {
+    if (inputQueue.length === 0) return;
+    const key = inputQueue.shift();
+    if (key === "ArrowLeft" && targetLane > 0) targetLane--;
+    if (key === "ArrowRight" && targetLane < 2) targetLane++;
+}
+
+function drawLanes(dimmed = false) {
+    rCtx.fillStyle = dimmed ? "#050508" : "#000"; 
+    rCtx.fillRect(0, 0, rCanvas.width, rCanvas.height);
+    
+    rCtx.strokeStyle = dimmed ? "#11111a" : "#1a1a2e";
     rCtx.lineWidth = 2;
     rCtx.beginPath();
-    rCtx.moveTo(76, 0); rCtx.lineTo(76, 260);
-    rCtx.moveTo(144, 0); rCtx.lineTo(144, 260);
+    rCtx.moveTo(76, 0); rCtx.lineTo(76, 390);
+    rCtx.moveTo(144, 0); rCtx.lineTo(144, 390);
     rCtx.stroke();
 }
 
+function drawScene(dimmed = false, flashObs = null, flashOn = true) {
+    drawLanes(dimmed);
+
+    runnerObstacles.forEach(obs => {
+        const isHit = (flashObs && obs === flashObs);
+        if (isHit && flashOn) {
+            rCtx.fillStyle = "#ff0033"; // Rojo intenso de choque
+        } else {
+            rCtx.fillStyle = dimmed ? "#44111d" : "#ff2a5f";
+        }
+        rCtx.fillRect(lanes[obs.lane], obs.y, 16, 22);
+    });
+
+    rCtx.fillStyle = dimmed ? "#333344" : "#00f0ff";
+    rCtx.fillRect(playerX, 330, 16, 20);
+}
+
+function triggerFlashAnimation(hitObs) {
+    let flashes = 0;
+    const flashInterval = setInterval(() => {
+        const flashOn = (flashes % 2 === 0);
+        drawScene(true, hitObs, flashOn);
+
+        flashes++;
+        if (flashes >= 6) { // 3 parpadeos
+            clearInterval(flashInterval);
+            if (playing) {
+                resetRunnerState();
+                runnerInterval = setInterval(runRunner, 25);
+            }
+        }
+    }, 100);
+}
+
 function resetRunnerState() {
+    isDead = false;
     targetLane = 1;
     playerX = lanes[1];
     runnerObstacles = [];
     runnerScore = 0;
     lastSpawnY = -150;
+    inputQueue = [];
     document.getElementById("runnerScore").innerText = 0;
-    drawLanes();
-    rCtx.fillStyle = "#00f0ff"; rCtx.fillRect(playerX, 210, 16, 20);
+    drawScene(false);
 }
 
-function resetRunner() {
-    if (runnerScore > runnerBest) { runnerBest = runnerScore; document.getElementById("runnerBest").innerText = runnerBest; }
-    resetRunnerState();
+function resetRunner(hitObs) {
+    isDead = true;
+    clearInterval(runnerInterval);
+
+    if (runnerScore > runnerBest) { 
+        runnerBest = runnerScore; 
+        document.getElementById("runnerBest").innerText = runnerBest; 
+    }
+
+    triggerFlashAnimation(hitObs);
 }
 
 function runRunner() {
+    if (isDead) return;
+
+    processInput();
+
     runnerScore += 1;
     document.getElementById("runnerScore").innerText = runnerScore;
 
-    let currentSpeed = 3.5 + Math.min(3.5, Math.floor(runnerScore / 250) * 0.5);
-    let minGap = 90;
+    let currentSpeed = 4.0 + Math.min(8, Math.floor(runnerScore / 100) * 0.5);
+    let minGap = 120; 
 
     lastSpawnY += currentSpeed;
     if (lastSpawnY > minGap) {
@@ -79,26 +137,23 @@ function runRunner() {
     }
 
     let targetX = lanes[targetLane];
-    playerX += (targetX - playerX) * 0.35;
+    playerX += (targetX - playerX) * 0.5;
 
-    drawLanes();
-
-    runnerObstacles.forEach((obs, index) => {
+    for (let i = runnerObstacles.length - 1; i >= 0; i--) {
+        let obs = runnerObstacles[i];
         obs.y += currentSpeed;
-        rCtx.fillStyle = "#ff2a5f";
-        rCtx.fillRect(lanes[obs.lane], obs.y, 16, 22);
 
         let obsCenterX = lanes[obs.lane] + 8;
         let playerCenterX = playerX + 8;
-        if (obs.y > 195 && obs.y < 232 && Math.abs(playerCenterX - obsCenterX) < 10) {
-            resetRunner();
+        if (obs.y > 315 && obs.y < 352 && Math.abs(playerCenterX - obsCenterX) < 10) {
+            resetRunner(obs);
+            return;
         }
 
-        if (obs.y > 280) runnerObstacles.splice(index, 1);
-    });
+        if (obs.y > 410) runnerObstacles.splice(i, 1);
+    }
 
-    rCtx.fillStyle = "#00f0ff";
-    rCtx.fillRect(playerX, 210, 16, 20);
+    drawScene(false);
 }
 
 rCanvas.addEventListener("click", () => {
