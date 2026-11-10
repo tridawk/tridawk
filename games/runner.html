@@ -61,7 +61,7 @@ function drawScene(dimmed = false, flashObs = null, flashOn = true) {
     runnerObstacles.forEach(obs => {
         const isHit = (flashObs && obs === flashObs);
         if (isHit && flashOn) {
-            rCtx.fillStyle = "#ff0033"; // Rojo intenso de choque
+            rCtx.fillStyle = "#ff0033"; 
         } else {
             rCtx.fillStyle = dimmed ? "#44111d" : "#ff2a5f";
         }
@@ -79,7 +79,7 @@ function triggerFlashAnimation(hitObs) {
         drawScene(true, hitObs, flashOn);
 
         flashes++;
-        if (flashes >= 6) { // 3 parpadeos
+        if (flashes >= 6) { 
             clearInterval(flashInterval);
             if (playing) {
                 resetRunnerState();
@@ -95,7 +95,7 @@ function resetRunnerState() {
     playerX = lanes[1];
     runnerObstacles = [];
     runnerScore = 0;
-    lastSpawnY = -150;
+    lastSpawnY = -150; 
     inputQueue = [];
     document.getElementById("runnerScore").innerText = 0;
     drawScene(false);
