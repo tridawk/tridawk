@@ -937,8 +937,8 @@
             document.getElementById("snakeScore").innerText = 0; 
             spawnFood();
             sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
-            sCtx.fillStyle = "#00f0ff"; sCtx.fillRect(food.x*sGrid, food.y*sGrid, sGrid-2, sGrid-2);
-            sCtx.fillStyle = "#ff2a5f"; snake.forEach(p => sCtx.fillRect(p.x*sGrid, p.y*sGrid, sGrid-2, sGrid-2));
+            sCtx.fillStyle = "#FF2A5F"; sCtx.fillRect(food.x*sGrid, food.y*sGrid, sGrid-2, sGrid-2);
+            sCtx.fillStyle = "#00f0ff"; snake.forEach(p => sCtx.fillRect(p.x*sGrid, p.y*sGrid, sGrid-2, sGrid-2));
         }
 
         function resetSnake() {
